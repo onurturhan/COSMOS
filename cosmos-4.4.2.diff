@@ -1,0 +1,480 @@
+diff -uraN cosmos-4.4.2/cosmos.gemspec cosmos-4.4.2_patched/cosmos.gemspec
+--- cosmos-4.4.2/cosmos.gemspec	2020-05-26 21:27:00.236299394 +0000
++++ cosmos-4.4.2_patched/cosmos.gemspec	2020-05-26 21:27:01.286300189 +0000
+@@ -92,6 +92,7 @@
+   s.add_runtime_dependency 'puma', '~> 3.10'
+   s.add_runtime_dependency 'rack', '~> 2.0'
+   s.add_runtime_dependency 'httpclient', '~> 2.8'
++  s.add_runtime_dependency 'write_xlsx', '~> 0.85'
+ 
+   # From http://www.rubydoc.info/gems/puma#Known_Bugs :
+   #   "For MRI versions 2.2.7, 2.2.8, 2.2.9, 2.2.10, 2.3.4 and 2.4.1, you may see stream closed in
+diff -uraN cosmos-4.4.2/ext/cosmos/ext/structure/structure.c cosmos-4.4.2_patched/ext/cosmos/ext/structure/structure.c
+--- cosmos-4.4.2/ext/cosmos/ext/structure/structure.c	2020-05-26 21:27:00.420299533 +0000
++++ cosmos-4.4.2_patched/ext/cosmos/ext/structure/structure.c	2020-05-26 21:27:01.472300322 +0000
+@@ -84,6 +84,9 @@
+ static VALUE symbol_SATURATE = Qnil;
+ static VALUE symbol_ERROR = Qnil;
+ static VALUE symbol_ERROR_ALLOW_HEX = Qnil;
++static VALUE symbol_LITTLE_16 = Qnil;
++static VALUE symbol_LITTLE_32 = Qnil;
++static VALUE symbol_DEFAULT_ALIGNMENT = Qnil;
+ 
+ /*
+  * Perform an left bit shift on a string
+@@ -424,12 +427,20 @@
+  * @param endianness [Symbol] {ENDIANNESS}
+  * @return [Integer] value read from the buffer
+  */
+-static VALUE binary_accessor_read(VALUE self, VALUE param_bit_offset, VALUE param_bit_size, VALUE param_data_type, VALUE param_buffer, VALUE param_endianness)
++static VALUE binary_accessor_read(VALUE self, VALUE param_bit_offset, VALUE param_bit_size, VALUE param_data_type, VALUE param_buffer, VALUE param_endianness, VALUE alignment )
+ {
+   /* Convert Parameters to C Data Types */
+   int bit_offset = FIX2INT(param_bit_offset);
+   int bit_size = FIX2INT(param_bit_size);
+ 
++  int start_alignment;
++  int end_alignment;
++  int shift_amount;
++  unsigned short mask_value;
++  unsigned short mask_value_pos;
++  unsigned short mask_value_neg;
++  unsigned short end_value;
++  unsigned short temp_data;
+   /* Local Variables */
+   int given_bit_offset = bit_offset;
+   int given_bit_size = bit_size;
+@@ -596,7 +607,7 @@
+       free(unsigned_char_array);
+     }
+ 
+-  } else if (param_data_type == symbol_UINT) {
++  } else if (param_data_type == symbol_UINT && alignment==symbol_DEFAULT_ALIGNMENT) {
+     /*###################################
+      *# Handle :UINT data type
+      *###################################*/
+@@ -676,8 +687,31 @@
+ 
+       free(unsigned_char_array);
+     }
++     //rb_raise(rb_eArgError, "strcmpDEFAULT %s %d %d %d",RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)),ID2SYM(rb_intern(RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)))),symbol_LITTLE_16,alignment );
++  }
++   else if (param_data_type == symbol_UINT && alignment==symbol_LITTLE_16)
++   {
++         start_alignment =(bit_offset-(bit_offset%16))/8;
++         end_alignment   =start_alignment+1;
++         shift_amount    =(bit_offset-(bit_offset%16)+16)-(bit_offset+bit_size);
++         mask_value      =((1<<bit_size)-1);
++         mask_value_pos  =(0x0000^(mask_value<<shift_amount));
++         mask_value_neg  =(0xFFFF^(mask_value<<shift_amount));
++         memcpy(&temp_data,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data ));
++
++         temp_data = mask_value_pos&temp_data;
++         end_value = temp_data>>shift_amount;
++         //printf("LITTLE 16 bit_o=%d bit_size=%d shift_amount=%d mas_val_pos=%04x %d \n",bit_offset,bit_size,shift_amount,mask_value_pos,end_value);
++
++         end_value = end_value*2;
++         end_value = end_value+=1;
++         return_value=end_value;
+ 
+-  } else if (param_data_type == symbol_FLOAT) {
++         //rb_raise(rb_eArgError, "strcmp16 %s %d %d %d",RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)),ID2SYM(rb_intern(RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)))),symbol_LITTLE_16,alignment );
++
++
++   }
++   else if (param_data_type == symbol_FLOAT) {
+     /*##########################
+      *# Handle :FLOAT data type
+      *##########################*/
+@@ -706,6 +740,8 @@
+     /*############################
+      *# Handle Unknown data types
+      *############################*/
++   // rb_raise(rb_eArgError, "%d %d ", param_data_type == symbol_UINT , alignment==symbol_LITTLE_16);
++    //rb_raise(rb_eArgError, "data_type_1 %s and %s is not recognized", RSTRING_PTR(rb_funcall(param_data_type, id_method_to_s, 0)),RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)));
+ 
+     rb_raise(rb_eArgError, "data_type %s is not recognized", RSTRING_PTR(rb_funcall(param_data_type, id_method_to_s, 0)));
+   }
+@@ -827,7 +863,7 @@
+  * @param endianness [Symbol] {ENDIANNESS}
+  * @return [Integer] value read from the buffer
+  */
+-static VALUE binary_accessor_write(VALUE self, VALUE value, VALUE param_bit_offset, VALUE param_bit_size, VALUE param_data_type, VALUE param_buffer, VALUE param_endianness, VALUE param_overflow)
++static VALUE binary_accessor_write(VALUE self, VALUE value, VALUE param_bit_offset, VALUE param_bit_size, VALUE param_data_type, VALUE param_buffer, VALUE param_endianness, VALUE param_overflow, VALUE alignment)
+ {
+   /* Convert Parameters to C Data Types */
+   int bit_offset = NUM2INT(param_bit_offset);
+@@ -835,6 +871,14 @@
+   /* Local Variables */
+   int given_bit_offset = bit_offset;
+   int given_bit_size = bit_size;
++  int start_alignment;
++  int end_alignment;
++  int shift_amount;
++  unsigned short mask_value;
++  unsigned short mask_value_pos;
++  unsigned short mask_value_neg;
++  unsigned short end_value;
++  unsigned short temp_data;
+   int upper_bound = 0;
+   int lower_bound = 0;
+   int end_bytes = 0;
+@@ -959,10 +1003,11 @@
+     /*###################################
+      *# Handle :INT data type
+      *###################################*/
+-    value = rb_funcall(rb_mKernel, id_method_Integer, 1, value);
+ 
+-    if ((BYTE_ALIGNED(bit_offset)) && (even_bit_size(bit_size)))
++    if ((BYTE_ALIGNED(bit_offset)) && (even_bit_size(bit_size)) && alignment==symbol_DEFAULT_ALIGNMENT)
+     {
++       value = rb_funcall(rb_mKernel, id_method_Integer, 1, value);
++
+       /*###########################################################
+        *# Handle byte-aligned 8, 16, 32, and 64 bit
+        *###########################################################*/
+@@ -992,10 +1037,11 @@
+       rb_str_modify(param_buffer);
+       memcpy((RSTRING_PTR(param_buffer) + lower_bound), &c_value, bit_size / 8);
+ 
+-    } else {
++    } else if(alignment==symbol_DEFAULT_ALIGNMENT || param_endianness == symbol_BIG_ENDIAN) {
+       /*###########################################################
+        *# Handle bit fields
+        *###########################################################*/
++      value = rb_funcall(rb_mKernel, id_method_Integer, 1, value);
+       value = check_overflow(value, bit_size, param_data_type, param_overflow);
+ 
+       string_length = ((bit_size - 1)/ 8) + 1;
+@@ -1049,6 +1095,22 @@
+ 
+       free(unsigned_char_array);
+     }
++    else if( alignment==symbol_LITTLE_16 )
++     {
++
++         start_alignment =(bit_offset-(bit_offset%16))/8;
++         end_alignment   =start_alignment+1;
++         shift_amount    =(bit_offset-(bit_offset%16)+16)-(bit_offset+bit_size);
++         mask_value      =((1<<bit_size)-1);
++         mask_value_pos  =(0x0000^(mask_value<<shift_amount));
++         mask_value_neg  =(0xFFFF^(mask_value<<shift_amount));
++         end_value       =mask_value_pos&(((value-1)/2)<<shift_amount);
++         rb_str_modify(param_buffer);
++         memcpy(&temp_data,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data ));
++         temp_data = mask_value_neg&temp_data;
++         temp_data = temp_data | end_value;
++         memcpy(&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),&temp_data,sizeof(temp_data));
++    }
+ 
+   } else if (param_data_type == symbol_FLOAT) {
+     /*##########################
+@@ -1119,7 +1181,7 @@
+   return INT2FIX(get_int_length(self));
+ }
+ 
+-static VALUE read_item_internal(VALUE self, VALUE item, VALUE buffer) {
++static VALUE read_item_internal(VALUE self, VALUE item, VALUE buffer,VALUE alignment ) {
+   volatile VALUE bit_offset = Qnil;
+   volatile VALUE bit_size = Qnil;
+   volatile VALUE data_type = Qnil;
+@@ -1139,7 +1201,7 @@
+     if (RTEST(array_size)) {
+       return rb_funcall(cBinaryAccessor, id_method_read_array, 6, bit_offset, bit_size, data_type, array_size, buffer, endianness);
+     } else {
+-      return binary_accessor_read(cBinaryAccessor, bit_offset, bit_size, data_type, buffer, endianness);
++      return binary_accessor_read(cBinaryAccessor, bit_offset, bit_size, data_type, buffer, endianness, alignment);
+     }
+   } else {
+     rb_raise(rb_eRuntimeError, "No buffer given to read_item");
+@@ -1160,25 +1222,26 @@
+ {
+   volatile VALUE item = Qnil;
+   volatile VALUE buffer = Qnil;
+-
++  volatile VALUE alignment = Qnil;
+   switch (argc)
+   {
+-    case 1:
+     case 2:
++    case 3:
+       item = argv[0];
+       buffer = rb_ivar_get(self, id_ivar_buffer);
+       break;
+-    case 3:
++    case 4:
+       item = argv[0];
+       buffer = argv[2];
++      alignment = argv[3];
+       break;
+     default:
+       /* Invalid number of arguments given */
+-      rb_raise(rb_eArgError, "wrong number of arguments (%d for 1..3)", argc);
++      rb_raise(rb_eArgError, "wrong number of arguments (%d for 1..4)", argc);
+       break;
+   };
+ 
+-  return read_item_internal(self, item, buffer);
++  return read_item_internal(self, item, buffer, alignment);
+ }
+ 
+ /*
+@@ -1450,6 +1513,9 @@
+   symbol_SATURATE = ID2SYM(rb_intern("SATURATE"));
+   symbol_ERROR = ID2SYM(rb_intern("ERROR"));
+   symbol_ERROR_ALLOW_HEX = ID2SYM(rb_intern("ERROR_ALLOW_HEX"));
++  symbol_LITTLE_16 = ID2SYM(rb_intern("LITTLE_16"));
++  symbol_LITTLE_32 = ID2SYM(rb_intern("LITTLE_32"));
++  symbol_DEFAULT_ALIGNMENT = ID2SYM(rb_intern("DEFAULT_ALIGNMENT"));
+ 
+   if ((*((char *) &endianness_check)) == 1) {
+     HOST_ENDIANNESS = symbol_LITTLE_ENDIAN;
+@@ -1457,8 +1523,8 @@
+     HOST_ENDIANNESS = symbol_BIG_ENDIAN;
+   }
+ 
+-  rb_define_singleton_method(cBinaryAccessor, "read", binary_accessor_read, 5);
+-  rb_define_singleton_method(cBinaryAccessor, "write", binary_accessor_write, 7);
++  rb_define_singleton_method(cBinaryAccessor, "read", binary_accessor_read, 6);
++  rb_define_singleton_method(cBinaryAccessor, "write", binary_accessor_write, 8);
+ 
+   cStructure = rb_define_class_under(mCosmos, "Structure", rb_cObject);
+   id_const_ZERO_STRING = rb_intern("ZERO_STRING");
+diff -uraN cosmos-4.4.2/lib/cosmos/gui/text/completion_text_edit.rb cosmos-4.4.2_patched/lib/cosmos/gui/text/completion_text_edit.rb
+--- cosmos-4.4.2/lib/cosmos/gui/text/completion_text_edit.rb	2020-05-26 21:27:00.532299618 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/gui/text/completion_text_edit.rb	2020-05-26 21:27:01.582300412 +0000
+@@ -59,7 +59,7 @@
+     end
+ 
+     def column_number
+-      textCursor.positionInBlock + 1
++      #textCursor.positionInBlock + 1
+     end
+ 
+     def current_line
+diff -uraN cosmos-4.4.2/lib/cosmos/packets/binary_accessor.rb cosmos-4.4.2_patched/lib/cosmos/packets/binary_accessor.rb
+--- cosmos-4.4.2/lib/cosmos/packets/binary_accessor.rb	2020-05-26 21:27:00.542299624 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/packets/binary_accessor.rb	2020-05-26 21:27:01.596300423 +0000
+@@ -114,7 +114,7 @@
+       # @param buffer [String] Binary string buffer to read from
+       # @param endianness [Symbol] {ENDIANNESS}
+       # @return [Integer] value read from the buffer
+-      def self.read(bit_offset, bit_size, data_type, buffer, endianness)
++      def self.read(bit_offset, bit_size, data_type, buffer, endianness,alignment)
+         given_bit_offset = bit_offset
+         given_bit_size = bit_size
+ 
+@@ -315,7 +315,7 @@
+       # @param endianness [Symbol] {ENDIANNESS}
+       # @param overflow [Symbol] {OVERFLOW_TYPES}
+       # @return [Integer] value passed in as a parameter
+-      def self.write(value, bit_offset, bit_size, data_type, buffer, endianness, overflow)
++      def self.write(value, bit_offset, bit_size, data_type, buffer, endianness, overflow, alignment="")
+         given_bit_offset = bit_offset
+         given_bit_size = bit_size
+ 
+@@ -467,7 +467,7 @@
+             ###########################################################
+             # Handle bit fields
+             ###########################################################
+-
++            if alignment == "" || endianness == :BIG_ENDIAN
+             # Extract Existing Data
+             if endianness == :LITTLE_ENDIAN
+               # Bitoffset always refers to the most significant bit of a bitfield
+@@ -515,9 +515,21 @@
+             else
+               buffer[lower_bound..upper_bound] = temp_array.pack(PACK_8_BIT_UINT_ARRAY)
+             end
+-
++            elsif alignment == "LITTLE_16"
++              start_alignment =(bit_offset-(bit_offset%16))/8
++              end_alignment   =start_alignment+1
++              shift_amount    =(bit_offset-(bit_offset%16)+16)-bit_offset+bit_size
++              mask_value      =(2**bit_size-1)
++              mask_value_pos  =(0x0000^(mask_value<<shift_amount))
++              mask_value_neg  =(0xFFFF^(mask_value<<shift_amount))
++              end_value       =mask_value_pos&(value<<shift_amount)
++              temp_data = buffer[start_alignment..end_alignment].reverse.unpack(PACK_LITTLE_ENDIAN_16_BIT_UINT_ARRAY)
++              temp_data = mask_value_neg&temp_data
++              temp_data = temp_data | end_value
++              buffer[start_alignment..end_alignment] = temp_data.pack(PACK_LITTLE_ENDIAN_16_BIT_UINT_ARRAY).reverse
+           end
+ 
++          end
+         elsif data_type == :FLOAT
+           ##########################
+           # Handle :FLOAT data type
+@@ -822,7 +834,7 @@
+ 
+           value = []
+           num_items.times do
+-            value << self.read(bit_offset, bit_size, data_type, buffer, endianness)
++            value << self.read(bit_offset, bit_size, data_type, buffer, endianness, :DEFAULT_ALIGNMENT)
+             bit_offset += bit_size
+           end
+         end
+diff -uraN cosmos-4.4.2/lib/cosmos/packets/packet.rb cosmos-4.4.2_patched/lib/cosmos/packets/packet.rb
+--- cosmos-4.4.2/lib/cosmos/packets/packet.rb	2020-05-26 21:27:00.542299624 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/packets/packet.rb	2020-05-26 21:27:01.598300425 +0000
+@@ -507,7 +507,15 @@
+     #   as Strings. :RAW values will match their data_type. :CONVERTED values
+     #   can be any type.
+     def read_item(item, value_type = :CONVERTED, buffer = @buffer)
+-      value = super(item, :RAW, buffer)
++      if item.meta.keys[0] and @default_endianness==:LITTLE_ENDIAN
++        if item.meta[item.meta.keys[0]].join=="LITTLE_16"
++          value = super(item, :RAW, buffer,:LITTLE_16)
++        elsif
++          value = super(item, :RAW, buffer,:LITTLE_32)
++        end
++      else
++        value = super(item, :RAW, buffer,:DEFAULT_ALIGNMENT)
++      end
+       derived_raw = false
+       if item.data_type == :DERIVED && value_type == :RAW
+         value_type = :CONVERTED
+diff -uraN cosmos-4.4.2/lib/cosmos/packets/structure_item.rb cosmos-4.4.2_patched/lib/cosmos/packets/structure_item.rb
+--- cosmos-4.4.2/lib/cosmos/packets/structure_item.rb	2020-05-26 21:27:00.542299624 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/packets/structure_item.rb	2020-05-26 21:27:01.599300426 +0000
+@@ -325,7 +325,7 @@
+           lower_bound = upper_bound - num_bytes + 1
+ 
+           if lower_bound < 0
+-            raise ArgumentError, "#{@name}: LITTLE_ENDIAN bitfield with bit_offset #{@bit_offset} and bit_size #{@bit_size} is invalid"
++            #raise ArgumentError, "#{@name}: LITTLE_ENDIAN bitfield with bit_offset #{@bit_offset} and bit_size #{@bit_size} is invalid"
+           end
+         end
+       end
+diff -uraN cosmos-4.4.2/lib/cosmos/packets/structure.rb cosmos-4.4.2_patched/lib/cosmos/packets/structure.rb
+--- cosmos-4.4.2/lib/cosmos/packets/structure.rb	2020-05-26 21:27:00.542299624 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/packets/structure.rb	2020-05-26 21:27:01.599300426 +0000
+@@ -91,14 +91,23 @@
+       # @param buffer [String] The binary buffer to read the item from
+       # @return Value based on the item definition. This could be a string, integer,
+       #   float, or array of values.
+-      def read_item(item, value_type = :RAW, buffer = @buffer)
++      def read_item(item, value_type = :RAW, buffer = @buffer,alignment="")
+         return nil if item.data_type == :DERIVED
+ 
+         if buffer
+           if item.array_size
+             return BinaryAccessor.read_array(item.bit_offset, item.bit_size, item.data_type, item.array_size, buffer, item.endianness)
+           else
+-            return BinaryAccessor.read(item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness)
++            if item.meta.keys[0] and @default_endianness==:LITTLE_ENDIAN
++              if item.meta[item.meta.keys[0]].join=="LITTLE_16"
++                #p "read_item called: #{item.name}, #{value}, #{item.meta}"
++                return BinaryAccessor.read(item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness,:LITTLE_16)
++              elsif item.meta[item.meta.keys[0]].join=="LITTLE_32"
++                return BinaryAccessor.read(item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness,:LITTLE_32)
++              end
++            else
++              return BinaryAccessor.read(item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness,:DEFAULT_ALIGNMENT)
++            end
+           end
+         else
+           raise "No buffer given to read_item"
+@@ -333,7 +342,15 @@
+         if item.array_size
+           BinaryAccessor.write_array(value, item.bit_offset, item.bit_size, item.data_type, item.array_size, buffer, item.endianness, item.overflow)
+         else
+-          BinaryAccessor.write(value, item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness, item.overflow)
++          if item.meta.keys[0]
++            if item.meta[item.meta.keys[0]].join=="LITTLE_16"
++              BinaryAccessor.write(value, item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness, item.overflow,:LITTLE_16 )
++            elsif item.meta[item.meta.keys[0]].join=="LITTLE_32"
++              BinaryAccessor.write(value, item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness, item.overflow,:LITTLE_32 )
++            end
++          else
++              BinaryAccessor.write(value, item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness, item.overflow,:DEFAULT_ALIGNMENT )
++          end
+         end
+       else
+         raise "No buffer given to write_item"
+diff -uraN cosmos-4.4.2/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb cosmos-4.4.2_patched/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb
+--- cosmos-4.4.2/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb	2020-05-26 21:27:00.554299636 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb	2020-05-26 21:27:01.611300434 +0000
+@@ -400,6 +400,8 @@
+         msg.setIcon(Qt::MessageBox::Question)
+         if @mode == :CMD_TLM_SERVER
+           msg.setText("Are you sure? All tools connected to this CmdTlmServer will lose connections and cease to function if the CmdTlmServer is closed.")
++          # Disposed for fast operation
++          msg.dispose
+         else
+           msg.setText("Are you sure? All tools connected to this Replay will lose connections and cease to function if the Replay is closed.")
+         end
+diff -uraN cosmos-4.4.2/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb cosmos-4.4.2_patched/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb
+--- cosmos-4.4.2/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb	2020-05-26 21:27:00.565299644 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb	2020-05-26 21:27:01.616300438 +0000
+@@ -115,7 +115,8 @@
+         cover, cover_file = make_pdf_detail('cover', @pdf_cover_filename, @pdf_cover_title, target_name)
+         header, header_file = make_pdf_detail('--header-spacing 3 --header-html', @pdf_header_filename, @pdf_header_title, target_name)
+         footer, footer_file = make_pdf_detail('--footer-spacing 3 --footer-html', @pdf_footer_filename, @pdf_footer_title, target_name)
+-        system_call = "wkhtmltopdf -L #{@pdf_side_margin} -R #{@pdf_side_margin} -T #{@pdf_top_margin} -B #{@pdf_bottom_margin} -s Letter #{header} #{footer} #{cover} #{@pdf_toc} \"#{tmp_html_file.path}\" \"#{File.dirname(filename)}/#{File.basename(filename, '.*')}.pdf\""
++        # wkhtmltopdf => wkhtmltopdf --load-error-handling ignore
++        system_call = "wkhtmltopdf --load-error-handling ignore -L #{@pdf_side_margin} -R #{@pdf_side_margin} -T #{@pdf_top_margin} -B #{@pdf_bottom_margin} -s Letter #{header} #{footer} #{cover} #{@pdf_toc} \"#{tmp_html_file.path}\" \"#{File.dirname(filename)}/#{File.basename(filename, '.*')}.pdf\""
+         status = nil
+         begin
+           Cosmos.set_working_dir(System.paths['HANDBOOKS']) do
+diff -uraN cosmos-4.4.2/lib/cosmos/tools/handbook_creator/handbook_creator.rb cosmos-4.4.2_patched/lib/cosmos/tools/handbook_creator/handbook_creator.rb
+--- cosmos-4.4.2/lib/cosmos/tools/handbook_creator/handbook_creator.rb	2020-05-26 21:27:00.565299644 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/tools/handbook_creator/handbook_creator.rb	2020-05-26 21:27:01.616300438 +0000
+@@ -9,6 +9,13 @@
+ # attribution addendums as found in the LICENSE.txt
+ 
+ require 'cosmos'
++
++begin 
++	gem 'write_xlsx'
++	require 'write_xlsx'
++rescue Gem::LoadError
++end
++
+ Cosmos.catch_fatal_exception do
+   require 'cosmos/gui/qt_tool'
+   require 'cosmos/gui/dialogs/splash'
+@@ -178,5 +185,30 @@
+         super(option_parser, options)
+       end
+     end
++
++    def self.create_htmls_extern(hide_ignored=true, handbook_creator_path="config/tools/handbook_creator/handbook_creator.txt")
++      abs_handbook_path=File.join(File.expand_path("..",Dir.pwd),handbook_creator_path)
++      begin
++        @config = HandbookCreatorConfig.new(abs_handbook_path)
++        @config.create_html(hide_ignored)
++        puts('HTML Handbooks created successfully.')
++      rescue Exception => err
++        puts err
++        #Cosmos.handle_critical_exception(err)
++      end
++    end
++    
++    def self.create_pdfs_extern(hide_ignored=true, handbook_creator_path="config/tools/handbook_creator/handbook_creator.txt")
++      abs_handbook_path=File.join(File.expand_path("..",Dir.pwd),handbook_creator_path)
++      begin
++        @config = HandbookCreatorConfig.new(abs_handbook_path)
++        #@config.create_pdf(true, hide_ignored)
++        #create_pdfs(hide_ignored, 0)
++        puts('PDF  Handbooks created successfully.')
++      rescue Exception => err
++        puts err
++        #Cosmos.handle_critical_exception(err)
++      end
++    end     
+   end
+ end
+diff -uraN cosmos-4.4.2/lib/cosmos/tools/launcher/launcher.rb cosmos-4.4.2_patched/lib/cosmos/tools/launcher/launcher.rb
+--- cosmos-4.4.2/lib/cosmos/tools/launcher/launcher.rb	2020-05-26 21:27:00.565299644 +0000
++++ cosmos-4.4.2_patched/lib/cosmos/tools/launcher/launcher.rb	2020-05-26 21:27:01.616300438 +0000
+@@ -173,7 +173,8 @@
+ 
+     def self.pre_window_new_hook(options)
+       # Show legal dialog
+-      LegalDialog.new
++      # Comment out for fast operation
++      # LegalDialog.new
+     end
+ 
+     def self.run(option_parser = nil, options = nil)
