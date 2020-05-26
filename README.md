@@ -1,5 +1,7 @@
 # COSMOS
 
+sh run.sh # =>  download cosmos-x.y.z, patch cosmos, uninstall original version, install patched version.
+
 Test File:
 ```
 COMMAND EXAMPLE TEST_CMD1 LITTLE_ENDIAN ""
