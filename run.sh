@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # ############ DIFF CREATE 
-# diff -uraN cosmos-4.4.2 cosmos-4.4.2_patched > cosmos-4.4.2.diff
+# diff -uraN cosmos-4.5.0 cosmos-4.5.0_patched > cosmos-4.5.0.diff
 
-export PACKAGE_VERSION_REF="4.4.2"
+export PACKAGE_VERSION_REF="4.5.0"
 
 export PACKAGE_NAME="cosmos"
-export PACKAGE_VERSION="4.4.2"
+export PACKAGE_VERSION="4.5.0"
 export PACKAGE_FOLDER=$PACKAGE_NAME"-"$PACKAGE_VERSION
 
 rm -rif $PACKAGE_FOLDER".gem" $PACKAGE_FOLDER"_patched.gem" $PACKAGE_FOLDER
@@ -32,8 +32,8 @@ cd ..
 cd $PACKAGE_FOLDER
 VERSION=$PACKAGE_VERSION gem build cosmos.gemspec
 
-gem uninstall $PACKAGE_NAME -v $PACKAGE_VERSION
-gem install $PACKAGE_FOLDER".gem" --force
+#gem uninstall $PACKAGE_NAME -v $PACKAGE_VERSION
+#gem install $PACKAGE_FOLDER".gem" --force
 
 mv $PACKAGE_FOLDER".gem" ../$PACKAGE_FOLDER"_patched.gem" && cd ../ && rm -rif $PACKAGE_FOLDER $PACKAGE_FOLDER".gem"
  
