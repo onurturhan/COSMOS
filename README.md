@@ -1,4 +1,8 @@
-# COSMOS
+# COSMOS (https://cosmosrb.com/) 
+
+COSMOS => The User Interface for Command and Control of Embedded Systems
+
+This project (patches) created for COSMOS to solve issue described: https://github.com/BallAerospace/COSMOS/issues/1020
 
 sh run.sh # =>  download cosmos-x.y.z, patch cosmos, uninstall original version, install patched version.
 
