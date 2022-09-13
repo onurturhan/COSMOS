@@ -1,17 +1,18 @@
 diff -uraN cosmos-4.5.0/cosmos.gemspec cosmos-4.5.0_patched/cosmos.gemspec
---- cosmos-4.5.0/cosmos.gemspec	2020-11-09 22:13:31.837663152 +0300
-+++ cosmos-4.5.0_patched/cosmos.gemspec	2020-11-09 21:53:06.000000000 +0300
-@@ -92,6 +92,7 @@
+--- cosmos-4.5.0/cosmos.gemspec	2022-08-29 11:29:19.168128192 +0000
++++ cosmos-4.5.0_patched/cosmos.gemspec	2022-08-29 11:27:48.000000000 +0000
+@@ -92,6 +92,8 @@
    s.add_runtime_dependency 'puma', '~> 3.10'
    s.add_runtime_dependency 'rack', '~> 2.0'
    s.add_runtime_dependency 'httpclient', '~> 2.8'
 +  s.add_runtime_dependency 'write_xlsx', '~> 0.85'
++  s.add_runtime_dependency 'spreadsheet', '~> 1.0'  
  
    # From http://www.rubydoc.info/gems/puma#Known_Bugs :
    #   "For MRI versions 2.2.7, 2.2.8, 2.2.9, 2.2.10, 2.3.4 and 2.4.1, you may see stream closed in
 diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patched/ext/cosmos/ext/structure/structure.c
---- cosmos-4.5.0/ext/cosmos/ext/structure/structure.c	2020-11-09 22:13:32.053662512 +0300
-+++ cosmos-4.5.0_patched/ext/cosmos/ext/structure/structure.c	2020-11-09 21:56:00.000000000 +0300
+--- cosmos-4.5.0/ext/cosmos/ext/structure/structure.c	2022-08-29 11:29:19.368126561 +0000
++++ cosmos-4.5.0_patched/ext/cosmos/ext/structure/structure.c	2022-08-29 11:26:10.000000000 +0000
 @@ -84,6 +84,9 @@
  static VALUE symbol_SATURATE = Qnil;
  static VALUE symbol_ERROR = Qnil;
@@ -22,7 +23,7 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
  
  /*
   * Perform an left bit shift on a string
-@@ -424,12 +427,20 @@
+@@ -424,12 +427,36 @@
   * @param endianness [Symbol] {ENDIANNESS}
   * @return [Integer] value read from the buffer
   */
@@ -36,15 +37,31 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
 +  int start_alignment;
 +  int end_alignment;
 +  int shift_amount;
-+  unsigned short mask_value;
-+  unsigned short mask_value_pos;
-+  unsigned short mask_value_neg;
-+  unsigned short end_value;
-+  unsigned short temp_data;
++
++  unsigned short mask_value_us;
++  unsigned short mask_value_pos_us;
++  unsigned short mask_value_neg_us;
++  unsigned short end_value_us;
++  unsigned short temp_data_us;
++  
++  unsigned int mask_value_ui;
++  unsigned int mask_value_pos_ui;
++  unsigned int mask_value_neg_ui;
++  unsigned int end_value_ui;
++  unsigned int temp_data_ui;
++  
++#if 0 /*64 bit return is not supported from this function A.M.G*/
++  unsigned long long int mask_value_lui;
++  unsigned long long int mask_value_pos_lui;
++  unsigned long long int mask_value_neg_lui;
++  unsigned long long int end_value_lui;
++  unsigned long long int temp_data_lui;
++#endif
++
    /* Local Variables */
    int given_bit_offset = bit_offset;
    int given_bit_size = bit_size;
-@@ -596,7 +607,7 @@
+@@ -596,7 +623,7 @@
        free(unsigned_char_array);
      }
  
@@ -53,10 +70,12 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
      /*###################################
       *# Handle :UINT data type
       *###################################*/
-@@ -676,8 +687,31 @@
+@@ -676,8 +703,51 @@
  
        free(unsigned_char_array);
      }
+-
+-  } else if (param_data_type == symbol_FLOAT) {
 +     //rb_raise(rb_eArgError, "strcmpDEFAULT %s %d %d %d",RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)),ID2SYM(rb_intern(RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)))),symbol_LITTLE_16,alignment );
 +  }
 +   else if (param_data_type == symbol_UINT && alignment==symbol_LITTLE_16)
@@ -64,29 +83,48 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
 +         start_alignment =(bit_offset-(bit_offset%16))/8;
 +         end_alignment   =start_alignment+1;
 +         shift_amount    =(bit_offset-(bit_offset%16)+16)-(bit_offset+bit_size);
-+         mask_value      =((1<<bit_size)-1);
-+         mask_value_pos  =(0x0000^(mask_value<<shift_amount));
-+         mask_value_neg  =(0xFFFF^(mask_value<<shift_amount));
-+         memcpy(&temp_data,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data ));
++         mask_value_us      =((1<<bit_size)-1);
++         mask_value_pos_us  =(0x0000^(mask_value_us<<shift_amount));
++         mask_value_neg_us  =(0xFFFF^(mask_value_us<<shift_amount));
++         memcpy(&temp_data_us,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data_us ));
 +
-+         temp_data = mask_value_pos&temp_data;
-+         end_value = temp_data>>shift_amount;
++         temp_data_us = mask_value_pos_us&temp_data_us;
++         end_value_us = temp_data_us>>shift_amount;
 +         //printf("LITTLE 16 bit_o=%d bit_size=%d shift_amount=%d mas_val_pos=%04x %d \n",bit_offset,bit_size,shift_amount,mask_value_pos,end_value);
 +
-+         end_value = end_value*2;
-+         end_value = end_value+=1;
-+         return_value=end_value;
- 
--  } else if (param_data_type == symbol_FLOAT) {
++         end_value_us = end_value_us*2;
++         end_value_us = end_value_us+=1;
++         return_value=end_value_us;
++
 +         //rb_raise(rb_eArgError, "strcmp16 %s %d %d %d",RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)),ID2SYM(rb_intern(RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)))),symbol_LITTLE_16,alignment );
 +
 +
 +   }
++   else if (param_data_type == symbol_UINT && alignment==symbol_LITTLE_32)
++   {       
++         start_alignment =(bit_offset-(bit_offset%32))/8;
++         end_alignment   =start_alignment+1;
++         shift_amount    =(bit_offset-(bit_offset%32)+32)-(bit_offset+bit_size);
++         mask_value_ui      =((1<<bit_size)-1);
++         mask_value_pos_ui  =(0x00000000^(mask_value_ui<<shift_amount));
++         mask_value_neg_ui  =(0xFFFFFFFF^(mask_value_ui<<shift_amount));
++         memcpy(&temp_data_ui,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data_ui ));
++
++         temp_data_ui = mask_value_pos_ui&temp_data_ui;
++         end_value_ui = temp_data_ui>>shift_amount;
++         //printf("LITTLE 32 bit_o=%d bit_size=%d shift_amount=%d mas_val_pos=%04x %d \n",bit_offset,bit_size,shift_amount,mask_value_pos,end_value);
++
++         end_value_ui = end_value_ui*2;
++         end_value_ui = end_value_ui+=1;
++         return_value=end_value_ui;
++
++         //rb_raise(rb_eArgError, "strcmp32 %s %d %d %d",RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)),ID2SYM(rb_intern(RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)))),symbol_LITTLE_32,alignment );
++   }   
 +   else if (param_data_type == symbol_FLOAT) {
      /*##########################
       *# Handle :FLOAT data type
       *##########################*/
-@@ -706,6 +740,8 @@
+@@ -706,6 +776,8 @@
      /*############################
       *# Handle Unknown data types
       *############################*/
@@ -95,7 +133,7 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
  
      rb_raise(rb_eArgError, "data_type %s is not recognized", RSTRING_PTR(rb_funcall(param_data_type, id_method_to_s, 0)));
    }
-@@ -827,7 +863,7 @@
+@@ -827,7 +899,7 @@
   * @param endianness [Symbol] {ENDIANNESS}
   * @return [Integer] value read from the buffer
   */
@@ -104,22 +142,38 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
  {
    /* Convert Parameters to C Data Types */
    int bit_offset = NUM2INT(param_bit_offset);
-@@ -835,6 +871,14 @@
+@@ -835,6 +907,30 @@
    /* Local Variables */
    int given_bit_offset = bit_offset;
    int given_bit_size = bit_size;
 +  int start_alignment;
 +  int end_alignment;
 +  int shift_amount;
-+  unsigned short mask_value;
-+  unsigned short mask_value_pos;
-+  unsigned short mask_value_neg;
-+  unsigned short end_value;
-+  unsigned short temp_data;
++
++  unsigned short mask_value_us;
++  unsigned short mask_value_pos_us;
++  unsigned short mask_value_neg_us;
++  unsigned short end_value_us;
++  unsigned short temp_data_us;
++  
++  unsigned int mask_value_ui;
++  unsigned int mask_value_pos_ui;
++  unsigned int mask_value_neg_ui;
++  unsigned int end_value_ui;
++  unsigned int temp_data_ui;
++  
++#if 0 /*64 bit return is not supported from this function A.M.G*/
++  unsigned long long int mask_value_lui;
++  unsigned long long int mask_value_pos_lui;
++  unsigned long long int mask_value_neg_lui;
++  unsigned long long int end_value_lui;
++  unsigned long long int temp_data_lui;
++#endif
++
    int upper_bound = 0;
    int lower_bound = 0;
    int end_bytes = 0;
-@@ -959,10 +1003,11 @@
+@@ -959,10 +1055,11 @@
      /*###################################
       *# Handle :INT data type
       *###################################*/
@@ -133,7 +187,7 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
        /*###########################################################
         *# Handle byte-aligned 8, 16, 32, and 64 bit
         *###########################################################*/
-@@ -992,10 +1037,11 @@
+@@ -992,10 +1089,11 @@
        rb_str_modify(param_buffer);
        memcpy((RSTRING_PTR(param_buffer) + lower_bound), &c_value, bit_size / 8);
  
@@ -146,30 +200,45 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
        value = check_overflow(value, bit_size, param_data_type, param_overflow);
  
        string_length = ((bit_size - 1)/ 8) + 1;
-@@ -1049,6 +1095,22 @@
+@@ -1049,6 +1147,37 @@
  
        free(unsigned_char_array);
      }
 +    else if( alignment==symbol_LITTLE_16 )
-+     {
++    {
 +
 +         start_alignment =(bit_offset-(bit_offset%16))/8;
 +         end_alignment   =start_alignment+1;
 +         shift_amount    =(bit_offset-(bit_offset%16)+16)-(bit_offset+bit_size);
-+         mask_value      =((1<<bit_size)-1);
-+         mask_value_pos  =(0x0000^(mask_value<<shift_amount));
-+         mask_value_neg  =(0xFFFF^(mask_value<<shift_amount));
-+         end_value       =mask_value_pos&(((value-1)/2)<<shift_amount);
++         mask_value_us      =((1<<bit_size)-1);
++         mask_value_pos_us  =(0x0000^(mask_value_us<<shift_amount));
++         mask_value_neg_us  =(0xFFFF^(mask_value_us<<shift_amount));
++         end_value_us       =mask_value_pos_us&(((value-1)/2)<<shift_amount);
 +         rb_str_modify(param_buffer);
-+         memcpy(&temp_data,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data ));
-+         temp_data = mask_value_neg&temp_data;
-+         temp_data = temp_data | end_value;
-+         memcpy(&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),&temp_data,sizeof(temp_data));
++         memcpy(&temp_data_us,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data_us ));
++         temp_data_us = mask_value_neg_us&temp_data_us;
++         temp_data_us = temp_data_us | end_value_us;
++         memcpy(&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),&temp_data_us,sizeof(temp_data_us));
++    }
++    else if( alignment==symbol_LITTLE_32 )
++    {
++         start_alignment =(bit_offset-(bit_offset%32))/8;
++         end_alignment   =start_alignment+1;
++         shift_amount    =(bit_offset-(bit_offset%32)+32)-(bit_offset+bit_size);
++         mask_value_ui      =((1<<bit_size)-1);
++         mask_value_pos_ui  =(0x00000000^(mask_value_ui<<shift_amount));
++         mask_value_neg_ui  =(0xFFFFFFFF^(mask_value_ui<<shift_amount));
++         end_value_ui       =mask_value_pos_ui&(((value-1)/2)<<shift_amount);
++         rb_str_modify(param_buffer);
++         memcpy(&temp_data_ui,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data_ui ));
++         temp_data_ui = mask_value_neg_ui&temp_data_ui;
++         temp_data_ui = temp_data_ui | end_value_ui;
++         memcpy(&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),&temp_data_ui,sizeof(temp_data_ui));
 +    }
  
    } else if (param_data_type == symbol_FLOAT) {
      /*##########################
-@@ -1119,7 +1181,7 @@
+@@ -1119,7 +1248,7 @@
    return INT2FIX(get_int_length(self));
  }
  
@@ -178,7 +247,7 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
    volatile VALUE bit_offset = Qnil;
    volatile VALUE bit_size = Qnil;
    volatile VALUE data_type = Qnil;
-@@ -1139,7 +1201,7 @@
+@@ -1139,7 +1268,7 @@
      if (RTEST(array_size)) {
        return rb_funcall(cBinaryAccessor, id_method_read_array, 6, bit_offset, bit_size, data_type, array_size, buffer, endianness);
      } else {
@@ -187,7 +256,7 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
      }
    } else {
      rb_raise(rb_eRuntimeError, "No buffer given to read_item");
-@@ -1160,25 +1222,26 @@
+@@ -1160,25 +1289,26 @@
  {
    volatile VALUE item = Qnil;
    volatile VALUE buffer = Qnil;
@@ -219,7 +288,7 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
  }
  
  /*
-@@ -1450,6 +1513,9 @@
+@@ -1450,6 +1580,9 @@
    symbol_SATURATE = ID2SYM(rb_intern("SATURATE"));
    symbol_ERROR = ID2SYM(rb_intern("ERROR"));
    symbol_ERROR_ALLOW_HEX = ID2SYM(rb_intern("ERROR_ALLOW_HEX"));
@@ -229,7 +298,7 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
  
    if ((*((char *) &endianness_check)) == 1) {
      HOST_ENDIANNESS = symbol_LITTLE_ENDIAN;
-@@ -1457,8 +1523,8 @@
+@@ -1457,8 +1590,8 @@
      HOST_ENDIANNESS = symbol_BIG_ENDIAN;
    }
  
@@ -240,9 +309,14 @@ diff -uraN cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.0_patche
  
    cStructure = rb_define_class_under(mCosmos, "Structure", rb_cObject);
    id_const_ZERO_STRING = rb_intern("ZERO_STRING");
+@@ -1479,3 +1612,4 @@
+   cStructureItem = rb_define_class_under(mCosmos, "StructureItem", rb_cObject);
+   rb_define_method(cStructureItem, "<=>", structure_item_spaceship, 1);
+ }
++
 diff -uraN cosmos-4.5.0/lib/cosmos/gui/text/completion_text_edit.rb cosmos-4.5.0_patched/lib/cosmos/gui/text/completion_text_edit.rb
---- cosmos-4.5.0/lib/cosmos/gui/text/completion_text_edit.rb	2020-11-09 22:13:32.233661982 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/gui/text/completion_text_edit.rb	2020-11-09 21:58:15.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/gui/text/completion_text_edit.rb	2022-08-29 11:29:19.495125526 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/gui/text/completion_text_edit.rb	2022-08-29 11:26:24.000000000 +0000
 @@ -59,7 +59,7 @@
      end
  
@@ -252,9 +326,21 @@ diff -uraN cosmos-4.5.0/lib/cosmos/gui/text/completion_text_edit.rb cosmos-4.5.0
      end
  
      def current_line
+diff -uraN cosmos-4.5.0/lib/cosmos/packet_logs/packet_log_reader.rb cosmos-4.5.0_patched/lib/cosmos/packet_logs/packet_log_reader.rb
+--- cosmos-4.5.0/lib/cosmos/packet_logs/packet_log_reader.rb	2022-08-29 11:29:19.519125326 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/packet_logs/packet_log_reader.rb	2022-08-29 11:26:30.000000000 +0000
+@@ -170,7 +170,7 @@
+         # identify_and_define is false
+         buffer = packet.buffer(false)
+         if buffer.length >= 33
+-          System.load_configuration(BinaryAccessor.read(8, 256, :STRING, buffer, :BIG_ENDIAN))
++          System.load_configuration(BinaryAccessor.read(8, 256, :STRING, buffer, :BIG_ENDIAN, :DEFAULT_ALIGNMENT))
+         end
+       end
+ 
 diff -uraN cosmos-4.5.0/lib/cosmos/packets/binary_accessor.rb cosmos-4.5.0_patched/lib/cosmos/packets/binary_accessor.rb
---- cosmos-4.5.0/lib/cosmos/packets/binary_accessor.rb	2020-11-09 22:13:32.253661923 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/packets/binary_accessor.rb	2020-11-09 21:59:44.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/packets/binary_accessor.rb	2022-08-29 11:29:19.519125326 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/packets/binary_accessor.rb	2022-08-29 11:26:39.000000000 +0000
 @@ -114,7 +114,7 @@
        # @param buffer [String] Binary string buffer to read from
        # @param endianness [Symbol] {ENDIANNESS}
@@ -282,7 +368,7 @@ diff -uraN cosmos-4.5.0/lib/cosmos/packets/binary_accessor.rb cosmos-4.5.0_patch
              # Extract Existing Data
              if endianness == :LITTLE_ENDIAN
                # Bitoffset always refers to the most significant bit of a bitfield
-@@ -515,9 +515,21 @@
+@@ -515,9 +515,33 @@
              else
                buffer[lower_bound..upper_bound] = temp_array.pack(PACK_8_BIT_UINT_ARRAY)
              end
@@ -299,13 +385,25 @@ diff -uraN cosmos-4.5.0/lib/cosmos/packets/binary_accessor.rb cosmos-4.5.0_patch
 +              temp_data = mask_value_neg&temp_data
 +              temp_data = temp_data | end_value
 +              buffer[start_alignment..end_alignment] = temp_data.pack(PACK_LITTLE_ENDIAN_16_BIT_UINT_ARRAY).reverse
++            elsif alignment == "LITTLE_32"
++              start_alignment =(bit_offset-(bit_offset%32))/8
++              end_alignment   =start_alignment+1
++              shift_amount    =(bit_offset-(bit_offset%32)+32)-bit_offset+bit_size
++              mask_value      =(2**bit_size-1)
++              mask_value_pos  =(0x00000000^(mask_value<<shift_amount))
++              mask_value_neg  =(0xFFFFFFFF^(mask_value<<shift_amount))
++              end_value       =mask_value_pos&(value<<shift_amount)
++              temp_data = buffer[start_alignment..end_alignment].reverse.unpack(PACK_LITTLE_ENDIAN_32_BIT_UINT_ARRAY)
++              temp_data = mask_value_neg&temp_data
++              temp_data = temp_data | end_value
++              buffer[start_alignment..end_alignment] = temp_data.pack(PACK_LITTLE_ENDIAN_32_BIT_UINT_ARRAY).reverse	      
            end
  
 +          end
          elsif data_type == :FLOAT
            ##########################
            # Handle :FLOAT data type
-@@ -822,7 +834,7 @@
+@@ -822,7 +846,7 @@
  
            value = []
            num_items.times do
@@ -315,8 +413,8 @@ diff -uraN cosmos-4.5.0/lib/cosmos/packets/binary_accessor.rb cosmos-4.5.0_patch
            end
          end
 diff -uraN cosmos-4.5.0/lib/cosmos/packets/packet.rb cosmos-4.5.0_patched/lib/cosmos/packets/packet.rb
---- cosmos-4.5.0/lib/cosmos/packets/packet.rb	2020-11-09 22:13:32.253661923 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/packets/packet.rb	2020-11-09 22:00:36.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/packets/packet.rb	2022-08-29 11:29:19.519125326 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/packets/packet.rb	2022-08-29 11:26:45.000000000 +0000
 @@ -507,7 +507,15 @@
      #   as Strings. :RAW values will match their data_type. :CONVERTED values
      #   can be any type.
@@ -325,7 +423,7 @@ diff -uraN cosmos-4.5.0/lib/cosmos/packets/packet.rb cosmos-4.5.0_patched/lib/co
 +      if item.meta.keys[0] and @default_endianness==:LITTLE_ENDIAN
 +        if item.meta[item.meta.keys[0]].join=="LITTLE_16"
 +          value = super(item, :RAW, buffer,:LITTLE_16)
-+        elsif
++        elsif item.meta[item.meta.keys[0]].join=="LITTLE_32"
 +          value = super(item, :RAW, buffer,:LITTLE_32)
 +        end
 +      else
@@ -335,8 +433,8 @@ diff -uraN cosmos-4.5.0/lib/cosmos/packets/packet.rb cosmos-4.5.0_patched/lib/co
        if item.data_type == :DERIVED && value_type == :RAW
          value_type = :CONVERTED
 diff -uraN cosmos-4.5.0/lib/cosmos/packets/structure_item.rb cosmos-4.5.0_patched/lib/cosmos/packets/structure_item.rb
---- cosmos-4.5.0/lib/cosmos/packets/structure_item.rb	2020-11-09 22:13:32.261661900 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/packets/structure_item.rb	2020-11-09 22:01:28.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/packets/structure_item.rb	2022-08-29 11:29:19.519125326 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/packets/structure_item.rb	2022-08-29 11:26:50.000000000 +0000
 @@ -325,7 +325,7 @@
            lower_bound = upper_bound - num_bytes + 1
  
@@ -347,8 +445,8 @@ diff -uraN cosmos-4.5.0/lib/cosmos/packets/structure_item.rb cosmos-4.5.0_patche
          end
        end
 diff -uraN cosmos-4.5.0/lib/cosmos/packets/structure.rb cosmos-4.5.0_patched/lib/cosmos/packets/structure.rb
---- cosmos-4.5.0/lib/cosmos/packets/structure.rb	2020-11-09 22:13:32.257661911 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/packets/structure.rb	2020-11-09 22:03:08.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/packets/structure.rb	2022-08-29 11:29:19.519125326 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/packets/structure.rb	2022-08-29 11:27:00.000000000 +0000
 @@ -91,14 +91,23 @@
        # @param buffer [String] The binary buffer to read the item from
        # @return Value based on the item definition. This could be a string, integer,
@@ -393,8 +491,8 @@ diff -uraN cosmos-4.5.0/lib/cosmos/packets/structure.rb cosmos-4.5.0_patched/lib
        else
          raise "No buffer given to write_item"
 diff -uraN cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb cosmos-4.5.0_patched/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb
---- cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb	2020-11-09 22:13:32.273661865 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb	2020-11-09 22:04:26.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb	2022-08-29 11:29:19.536125190 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb	2022-08-29 11:27:21.000000000 +0000
 @@ -400,6 +400,8 @@
          msg.setIcon(Qt::MessageBox::Question)
          if @mode == :CMD_TLM_SERVER
@@ -405,8 +503,8 @@ diff -uraN cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb co
            msg.setText("Are you sure? All tools connected to this Replay will lose connections and cease to function if the Replay is closed.")
          end
 diff -uraN cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb cosmos-4.5.0_patched/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb
---- cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb	2020-11-09 22:13:32.285661829 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb	2020-11-09 22:06:13.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb	2022-08-29 11:29:19.541125150 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb	2022-08-29 11:27:28.000000000 +0000
 @@ -115,7 +115,8 @@
          cover, cover_file = make_pdf_detail('cover', @pdf_cover_filename, @pdf_cover_title, target_name)
          header, header_file = make_pdf_detail('--header-spacing 3 --header-html', @pdf_header_filename, @pdf_header_title, target_name)
@@ -418,8 +516,8 @@ diff -uraN cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator_confi
          begin
            Cosmos.set_working_dir(System.paths['HANDBOOKS']) do
 diff -uraN cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator.rb cosmos-4.5.0_patched/lib/cosmos/tools/handbook_creator/handbook_creator.rb
---- cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator.rb	2020-11-09 22:13:32.285661829 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/tools/handbook_creator/handbook_creator.rb	2020-11-09 22:09:02.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator.rb	2022-08-29 11:29:19.541125150 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/tools/handbook_creator/handbook_creator.rb	2022-08-29 11:27:36.000000000 +0000
 @@ -9,6 +9,13 @@
  # attribution addendums as found in the LICENSE.txt
  
@@ -466,8 +564,8 @@ diff -uraN cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator.rb co
    end
  end
 diff -uraN cosmos-4.5.0/lib/cosmos/tools/launcher/launcher.rb cosmos-4.5.0_patched/lib/cosmos/tools/launcher/launcher.rb
---- cosmos-4.5.0/lib/cosmos/tools/launcher/launcher.rb	2020-11-09 22:13:32.285661829 +0300
-+++ cosmos-4.5.0_patched/lib/cosmos/tools/launcher/launcher.rb	2020-11-09 22:09:14.000000000 +0300
+--- cosmos-4.5.0/lib/cosmos/tools/launcher/launcher.rb	2022-08-29 11:29:19.544125124 +0000
++++ cosmos-4.5.0_patched/lib/cosmos/tools/launcher/launcher.rb	2022-08-29 11:27:41.000000000 +0000
 @@ -173,7 +173,8 @@
  
      def self.pre_window_new_hook(options)

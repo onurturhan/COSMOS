@@ -6,6 +6,8 @@ This project (patches) created for COSMOS to solve issue described: https://gith
 
 sh run.sh # =>  download cosmos-x.y.z, patch cosmos, uninstall original version, install patched version.
 
+Supported Types: META  ENDIAN_ALIGNMENT  "LITTLE_16"  &  META  ENDIAN_ALIGNMENT  "LITTLE_32"
+
 Test File:
 ```
 COMMAND EXAMPLE TEST_CMD1 LITTLE_ENDIAN ""
