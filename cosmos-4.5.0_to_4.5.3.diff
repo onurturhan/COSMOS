@@ -1,0 +1,3003 @@
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/cmd_extractor.ahk cosmos-4.5.3/autohotkey/tools/cmd_extractor.ahk
+--- cosmos-4.5.0/autohotkey/tools/cmd_extractor.ahk	2026-10-08 22:05:33.083031329 +0000
++++ cosmos-4.5.3/autohotkey/tools/cmd_extractor.ahk	2023-01-02 08:33:24.960705983 +0000
+@@ -4,27 +4,28 @@
+ Send ^r ; Mode->Include Raw Data CE-3
+ Sleep 500
+ Click 500 95 ; Browse
+-Sleep 1000
++WinWaitActive Select
+ Send cmd.bin{Enter}
+ WinWaitActive Command Extractor
+-Click 200 446 ; Process Files
++Click 200 446 ; Process Data
+ WinWaitActive Warning
+ Sleep 500
+-Send {Enter} ;
++Send {Enter}
+ WinWaitActive Log File
++Sleep 500
+ Click 450 305 ; Cancel
+ WinWaitActive Command Extractor
+ sleep 500
+-Click 200 446 ; Process Files
++Click 200 446 ; Process Data
+ WinWaitActive Warning
+ Sleep 500
+-Send {Enter} ;
++Send {Enter} ; Overwrite
+ Sleep 500
+-Send {Enter} ; Overwrite Yes
++Send {Enter} ; Warning Ok
+ Sleep 5000 ; Allow the file to be processed CE-1
+ Send {Enter}
+ WinWaitActive Command Extractor
+-Click 460 446 ; Open in Text Editor CE-2
++Click 315 446 ; Open in Text Editor CE-2
+ Sleep 5000
+ Send !f{x}      ; Exit text editor
+ WinActivate Command Extractor
+@@ -32,14 +33,15 @@
+ Send !f{a} ; Analyze logs
+ WinWaitActive Warning
+ Sleep 500
+-Send {Enter} ;
++Send {Enter}
+ WinWaitActive Log File
++Sleep 500
+ Click 450 305 ; Cancel
+ WinWaitActive Command Extractor
+ Send !f{a} ; Analyze logs
+ WinWaitActive Warning
+ Sleep 500
+-Send {Enter} ;
++Send {Enter}
+ WinWaitActive Log File
+ Sleep 2000
+ Send {Enter} ; Done
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/cmd_sender.ahk cosmos-4.5.3/autohotkey/tools/cmd_sender.ahk
+--- cosmos-4.5.0/autohotkey/tools/cmd_sender.ahk	2026-10-08 22:05:33.083031329 +0000
++++ cosmos-4.5.3/autohotkey/tools/cmd_sender.ahk	2023-01-02 08:33:24.960705983 +0000
+@@ -15,7 +15,7 @@
+ Send {Enter}
+ WinWaitActive Command Sender
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ WinActivate Command Sender
+ Sleep 500
+ Click 60 600 ; Click in the Command History
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/cmd_sequence.ahk cosmos-4.5.3/autohotkey/tools/cmd_sequence.ahk
+--- cosmos-4.5.0/autohotkey/tools/cmd_sequence.ahk	2026-10-08 22:05:33.083031329 +0000
++++ cosmos-4.5.3/autohotkey/tools/cmd_sequence.ahk	2023-01-02 08:33:24.960705983 +0000
+@@ -1,7 +1,7 @@
+ SetWinDelay 1000
+ WinWaitActive Command Sequence
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ WinActivate Command Sequence
+ 
+ Send ^o ; Open
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/data_viewer.ahk cosmos-4.5.3/autohotkey/tools/data_viewer.ahk
+--- cosmos-4.5.0/autohotkey/tools/data_viewer.ahk	2026-10-08 22:05:33.083031329 +0000
++++ cosmos-4.5.3/autohotkey/tools/data_viewer.ahk	2023-01-02 08:33:24.960705983 +0000
+@@ -1,7 +1,7 @@
+ WinWaitActive, Data Viewer ahk_class QWidget
+ Sleep 500
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ WinActivate Data Viewer
+ Sleep 500
+ Send ^r ; Reset
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/limits_monitor.ahk cosmos-4.5.3/autohotkey/tools/limits_monitor.ahk
+--- cosmos-4.5.0/autohotkey/tools/limits_monitor.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/limits_monitor.ahk	2023-01-02 08:33:24.960705983 +0000
+@@ -2,7 +2,7 @@
+ WinWaitActive Limits Monitor
+ Sleep 500
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ WinActivate Limits Monitor
+ Sleep 3000
+ Send !fp ; Options
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/packet_viewer.ahk cosmos-4.5.3/autohotkey/tools/packet_viewer.ahk
+--- cosmos-4.5.0/autohotkey/tools/packet_viewer.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/packet_viewer.ahk	2023-01-02 08:33:24.966705982 +0000
+@@ -3,7 +3,7 @@
+ WinWaitActive Packet Viewer
+ Sleep 500
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ WinActivate Packet Viewer
+ WinWaitActive Packet Viewer
+ Sleep 500
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/script_runner.ahk cosmos-4.5.3/autohotkey/tools/script_runner.ahk
+--- cosmos-4.5.0/autohotkey/tools/script_runner.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/script_runner.ahk	2023-01-02 08:33:24.967705983 +0000
+@@ -538,7 +538,7 @@
+ 
+ ; Start the CmdTlmServer
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ WinActivate Script Runner
+ Sleep 1000
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/test_runner2.ahk cosmos-4.5.3/autohotkey/tools/test_runner2.ahk
+--- cosmos-4.5.0/autohotkey/tools/test_runner2.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/test_runner2.ahk	2023-01-02 08:33:24.969705983 +0000
+@@ -1,7 +1,7 @@
+ SetWinDelay 500
+ ; Start the CmdTlmServer
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ 
+ WinActivate Test Runner
+ WinWaitActive Test Runner
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/tlm_grapher3.ahk cosmos-4.5.3/autohotkey/tools/tlm_grapher3.ahk
+--- cosmos-4.5.0/autohotkey/tools/tlm_grapher3.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/tlm_grapher3.ahk	2023-01-02 08:33:24.971705983 +0000
+@@ -3,7 +3,7 @@
+ 
+ ; Connect to the CT server
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ WinActivate Telemetry Grapher
+ Send {Enter}
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/tlm_grapher.ahk cosmos-4.5.3/autohotkey/tools/tlm_grapher.ahk
+--- cosmos-4.5.0/autohotkey/tools/tlm_grapher.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/tlm_grapher.ahk	2023-01-02 08:33:24.971705983 +0000
+@@ -20,7 +20,7 @@
+ 
+ ; Connect to the CT server
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ WinActivate Telemetry Grapher
+ Click 55 95  ; Start TG-3
+ Sleep 500
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/tlm_viewer2.ahk cosmos-4.5.3/autohotkey/tools/tlm_viewer2.ahk
+--- cosmos-4.5.0/autohotkey/tools/tlm_viewer2.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/tlm_viewer2.ahk	2023-01-02 08:33:24.971705983 +0000
+@@ -10,7 +10,7 @@
+ 
+ Sleep 500
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ Run ruby.exe %A_ScriptDir%/ScriptRunner -w 600 -t 600
+ 
+ WinWaitActive Script
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/tlm_viewer5.ahk cosmos-4.5.3/autohotkey/tools/tlm_viewer5.ahk
+--- cosmos-4.5.0/autohotkey/tools/tlm_viewer5.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/tlm_viewer5.ahk	2023-01-02 08:33:24.971705983 +0000
+@@ -4,7 +4,7 @@
+ Sleep 500
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+ WinActivate "INST ADCS"
+-Sleep 4000
++Sleep 10000
+ 
+ ; Close down command and telemetry server
+ WinActivate Command and Telemetry Server
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/autohotkey/tools/tlm_viewer.ahk cosmos-4.5.3/autohotkey/tools/tlm_viewer.ahk
+--- cosmos-4.5.0/autohotkey/tools/tlm_viewer.ahk	2026-10-08 22:05:33.106031170 +0000
++++ cosmos-4.5.3/autohotkey/tools/tlm_viewer.ahk	2023-01-02 08:33:24.971705983 +0000
+@@ -3,7 +3,7 @@
+ 
+ Sleep 500
+ Run ruby.exe %A_ScriptDir%/CmdTlmServer
+-Sleep 4000
++Sleep 10000
+ 
+ WinActivate Telemetry Viewer
+ Sleep 1000
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/bin/xtce_converter cosmos-4.5.3/bin/xtce_converter
+--- cosmos-4.5.0/bin/xtce_converter	2026-10-08 22:05:33.118031028 +0000
++++ cosmos-4.5.3/bin/xtce_converter	2023-01-02 08:33:24.996705982 +0000
+@@ -36,7 +36,7 @@
+ 
+   # Create the system option
+   option_parser.on("--system VALUE", "Use an alternative system.txt file") do |arg|
+-    Cosmos::System.instance(File.join(USERPATH, 'config', 'system', arg))
++    Cosmos::System.instance(File.join(Cosmos::USERPATH, 'config', 'system', arg))
+   end
+ 
+   # Handle --import mode
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/cosmos.gemspec cosmos-4.5.3/cosmos.gemspec
+--- cosmos-4.5.0/cosmos.gemspec	2026-10-08 22:05:33.118031028 +0000
++++ cosmos-4.5.3/cosmos.gemspec	2023-01-02 08:33:24.996705983 +0000
+@@ -73,10 +73,11 @@
+       files
+     else [] end
+ 
+-  s.required_ruby_version = '~> 2.3'
++  s.required_ruby_version = '~> 2.4'
+ 
+   # Runtime Dependencies
+   s.add_runtime_dependency 'bundler', '>= 1.3'
++  # s.add_runtime_dependency 'psych', '~> 3.3'
+   s.add_runtime_dependency 'rdoc', '>= 4' # qtbindings doesn't parse in 6.0.0, fixed in 6.0.1
+   s.add_runtime_dependency 'rake', '>= 10.0' # 10.0 released Nov 12, 2012
+   s.add_runtime_dependency 'json', '>= 1.5', '< 3' # 2.0+ works with COSMOS
+@@ -86,19 +87,14 @@
+   s.add_runtime_dependency 'uuidtools', '~> 2.1'
+   s.add_runtime_dependency 'snmp', '~> 1.0'
+   s.add_runtime_dependency 'rubyzip', '~> 1.2'
+-  s.add_runtime_dependency 'nokogiri', '~> 1.10'
++  s.add_runtime_dependency 'nokogiri', ['~> 1.10', '< 1.13'] # Nokogiri 1.13 doesn't support Ruby 2.5
+   s.add_runtime_dependency 'opengl-bindings', '~> 1.6' if RUBY_ENGINE == 'ruby' # MRI Only
+-  s.add_runtime_dependency 'qtbindings', '~> 4.8.6', '>= 4.8.6.2' if RUBY_ENGINE == 'ruby' # MRI Only
++  s.add_runtime_dependency 'qtbindings', '~> 4.8.6', '>= 4.8.6.2' if RUBY_ENGINE == 'ruby' && !ENV['CI'] # MRI Only, not Github
+   s.add_runtime_dependency 'puma', '~> 3.10'
+   s.add_runtime_dependency 'rack', '~> 2.0'
+   s.add_runtime_dependency 'httpclient', '~> 2.8'
+-
+-  # From http://www.rubydoc.info/gems/puma#Known_Bugs :
+-  #   "For MRI versions 2.2.7, 2.2.8, 2.2.9, 2.2.10, 2.3.4 and 2.4.1, you may see stream closed in
+-  #    another thread (IOError). It may be caused by a Ruby bug. It can be
+-  #    fixed with the gem https://rubygems.org/gems/stopgap_13632"
+-  # This is commented out because the gemspec is only evaluated at gem build time
+-  # s.add_runtime_dependency 'stopgap_13632', '~> 1.2.0' if RUBY_ENGINE == 'ruby' and %w(2.2.7 2.2.8 2.3.4 2.4.1).include? RUBY_VERSION  # MRI Only
++  s.add_runtime_dependency 'write_xlsx', '~> 0.85'
++  s.add_runtime_dependency 'spreadsheet', '~> 1.0'
+ 
+   # Development Dependencies
+   s.add_development_dependency 'diff-lcs', '~> 1.3' if RUBY_ENGINE == 'ruby' # Get latest for MRI
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/.coveralls.yml cosmos-4.5.3/.coveralls.yml
+--- cosmos-4.5.0/.coveralls.yml	2026-10-08 22:05:33.018031860 +0000
++++ cosmos-4.5.3/.coveralls.yml	1970-01-01 00:00:00.000000000 +0000
+@@ -1 +0,0 @@
+-service_name: travis-ci
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/demo/Rakefile cosmos-4.5.3/demo/Rakefile
+--- cosmos-4.5.0/demo/Rakefile	2026-10-08 22:05:33.118031028 +0000
++++ cosmos-4.5.3/demo/Rakefile	2023-01-02 08:33:25.068705982 +0000
+@@ -39,14 +39,14 @@
+   crc = Cosmos::Crc32.new(Cosmos::Crc32::DEFAULT_POLY, Cosmos::Crc32::DEFAULT_SEED, true, false)
+   File.open("config/data/crc.txt",'w') do |file|
+     file.puts "USER_MODIFIED" unless official
+-    Dir[File.join('lib','**','*')].each do |filename|
++    Dir[File.join('lib','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('config','**','*')].each do |filename|
++    Dir[File.join('config','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       next if File.basename(filename) == 'crc.txt'
+@@ -54,14 +54,14 @@
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('tools','**','*')].each do |filename|
++    Dir[File.join('tools','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('procedures','**','*')].each do |filename|
++    Dir[File.join('procedures','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/Dockerfile cosmos-4.5.3/Dockerfile
+--- cosmos-4.5.0/Dockerfile	2026-10-08 22:05:33.018031860 +0000
++++ cosmos-4.5.3/Dockerfile	2023-01-02 08:33:24.824705983 +0000
+@@ -54,7 +54,7 @@
+ # Download and setup COSMOS devel area
+ RUN gem install bundler --no-document
+ RUN cd /devel \
+-  && git clone ${COSMOS_REPO} COSMOS \
++  && git clone -b cosmos4 ${COSMOS_REPO} COSMOS \
+   && cd /devel/COSMOS \
+   && bundle install
+ 
+@@ -63,7 +63,9 @@
+ # Download COSMOS docker files to support docker release
+ RUN cd /devel \
+   && git clone ${COSMOS_DOCKER_REPO}
+-  
++
+ ENV COSMOS_DEVEL /devel/COSMOS
++ENV COSMOS_NO_SIMPLECOV 1
++ENV DOCKER 1
+ WORKDIR /devel/COSMOS
+-CMD bash
+\ No newline at end of file
++CMD bash
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/ext/cosmos/ext/buffered_file/buffered_file.c cosmos-4.5.3/ext/cosmos/ext/buffered_file/buffered_file.c
+--- cosmos-4.5.0/ext/cosmos/ext/buffered_file/buffered_file.c	2026-10-08 22:05:33.243029979 +0000
++++ cosmos-4.5.3/ext/cosmos/ext/buffered_file/buffered_file.c	2023-01-02 08:33:25.260705982 +0000
+@@ -56,7 +56,7 @@
+         rb_funcall(buffer, id_method_slice_bang, 1, rb_range_new(INT2FIX(0), INT2FIX(buffer_index - 1), Qfalse));
+         buffer_length = RSTRING_LEN(buffer);
+         buffer_index = 0;
+-        rb_ivar_set(self, id_ivar_buffer_index, INT2FIX(0));
++        rb_ivar_set(self, id_ivar_buffer_index, INT2FIX(buffer_index));
+       }
+       super_arg = INT2FIX(length - buffer_length);
+       rb_str_append(buffer, rb_funcall(rb_call_super(1, (VALUE*) &super_arg), id_method_to_s, 0));
+@@ -70,7 +70,7 @@
+       rb_funcall(buffer, id_method_slice_bang, 1, rb_range_new(INT2FIX(0), INT2FIX(buffer_index - 1), Qfalse));
+       buffer_length = RSTRING_LEN(buffer);
+       buffer_index = 0;
+-      rb_ivar_set(self, id_ivar_buffer_index, INT2FIX(0));
++      rb_ivar_set(self, id_ivar_buffer_index, INT2FIX(buffer_index));
+     }
+     super_arg = INT2FIX(BUFFER_SIZE - buffer_length);
+     rb_str_append(buffer, rb_funcall(rb_call_super(1, (VALUE*) &super_arg), id_method_to_s, 0));
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/ext/cosmos/ext/config_parser/config_parser.c cosmos-4.5.3/ext/cosmos/ext/config_parser/config_parser.c
+--- cosmos-4.5.0/ext/cosmos/ext/config_parser/config_parser.c	2026-10-08 22:05:33.243029979 +0000
++++ cosmos-4.5.3/ext/cosmos/ext/config_parser/config_parser.c	2023-01-02 08:33:25.260705982 +0000
+@@ -74,7 +74,6 @@
+   int result = 0;
+   long length = 0;
+   int index = 0;
+-  double float_pos = 0.0;
+   double float_size = NUM2DBL(size);
+   volatile VALUE progress_callback = rb_cvar_get(cConfigParser, id_cvar_progress_callback);
+   volatile VALUE line = Qnil;
+@@ -98,7 +97,7 @@
+ 
+     if (RTEST(progress_callback) && ((line_number % 10) == 0)) {
+       if (float_size > 0.0) {
+-        float_pos = NUM2DBL(rb_funcall(io, id_method_pos, 0));
++        double float_pos = NUM2DBL(rb_funcall(io, id_method_pos, 0));
+         rb_funcall(progress_callback, id_method_call, 1, rb_float_new(float_pos / float_size));
+       }
+     }
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/ext/cosmos/ext/line_graph/line_graph.c cosmos-4.5.3/ext/cosmos/ext/line_graph/line_graph.c
+--- cosmos-4.5.0/ext/cosmos/ext/line_graph/line_graph.c	2026-10-08 22:05:33.243029979 +0000
++++ cosmos-4.5.3/ext/cosmos/ext/line_graph/line_graph.c	2023-01-02 08:33:25.266705981 +0000
+@@ -95,8 +95,6 @@
+   volatile VALUE done = Qfalse;
+   volatile VALUE clipped0 = Qfalse;
+   volatile VALUE clipped1 = Qfalse;
+-  double x = 0.0;
+-  double y = 0.0;
+ 
+   code0 = cal_code(x0, y0, xmin, ymin, xmax, ymax);
+   code1 = cal_code(x1, y1, xmin, ymin, xmax, ymax);
+@@ -117,8 +115,8 @@
+     } else {
+       /* Part of the line is inside the viewable area.  Figure out which part
+        * of the line can be drawn. */
+-      x = 0.0;
+-      y = 0.0;
++      double x;
++      double y;
+ 
+       if (code0 != 0) {
+         codeout = code0;
+@@ -178,28 +176,19 @@
+   volatile VALUE result_clipped0 = Qnil;
+   volatile VALUE result_clipped1 = Qnil;
+   volatile VALUE return_value = Qnil;
+-  double double_x0 = 0.0;
+-  double double_y0 = 0.0;
+-  double double_x1 = 0.0;
+-  double double_y1 = 0.0;
+-  double double_xmin = 0.0;
+-  double double_ymin = 0.0;
+-  double double_xmax = 0.0;
+-  double double_ymax = 0.0;
++  double double_x0 = RFLOAT_VALUE(rb_funcall(x0, id_method_to_f, 0));
++  double double_y0 = RFLOAT_VALUE(rb_funcall(y0, id_method_to_f, 0));
++  double double_x1 = RFLOAT_VALUE(rb_funcall(x1, id_method_to_f, 0));
++  double double_y1 = RFLOAT_VALUE(rb_funcall(y1, id_method_to_f, 0));
++  double double_xmin = RFLOAT_VALUE(rb_funcall(xmin, id_method_to_f, 0));
++  double double_ymin = RFLOAT_VALUE(rb_funcall(ymin, id_method_to_f, 0));
++  double double_xmax = RFLOAT_VALUE(rb_funcall(xmax, id_method_to_f, 0));
++  double double_ymax = RFLOAT_VALUE(rb_funcall(ymax, id_method_to_f, 0));
+   double result_x0 = 0.0;
+   double result_y0 = 0.0;
+   double result_x1 = 0.0;
+   double result_y1 = 0.0;
+ 
+-  double_x0 = RFLOAT_VALUE(rb_funcall(x0, id_method_to_f, 0));
+-  double_y0 = RFLOAT_VALUE(rb_funcall(y0, id_method_to_f, 0));
+-  double_x1 = RFLOAT_VALUE(rb_funcall(x1, id_method_to_f, 0));
+-  double_y1 = RFLOAT_VALUE(rb_funcall(y1, id_method_to_f, 0));
+-  double_xmin = RFLOAT_VALUE(rb_funcall(xmin, id_method_to_f, 0));
+-  double_ymin = RFLOAT_VALUE(rb_funcall(ymin, id_method_to_f, 0));
+-  double_xmax = RFLOAT_VALUE(rb_funcall(xmax, id_method_to_f, 0));
+-  double_ymax = RFLOAT_VALUE(rb_funcall(ymax, id_method_to_f, 0));
+-
+   result = line_clip_internal(double_x0, double_y0, double_x1, double_y1, double_xmin, double_ymin, double_xmax, double_ymax, &result_x0, &result_y0, &result_x1, &result_y1, &result_clipped0, &result_clipped1);
+ 
+   if (result == Qtrue)
+@@ -236,10 +225,8 @@
+ static VALUE scale_value_to_graph_y(int argc, VALUE* argv, VALUE self) {
+   volatile VALUE y = Qnil;
+   ID id_axis = 0;
+-  long long_graph_top_y = 0;
+-  double double_y = 0.0;
+-  double double_y_max = 0.0;
+-  double double_y_scale = 0.0;
++  double double_y_max;
++  double double_y_scale;
+ 
+   switch (argc) {
+     case 1:
+@@ -256,8 +243,8 @@
+       break;
+   };
+ 
+-  long_graph_top_y = FIX2INT(rb_ivar_get(self, id_ivar_graph_top_y));
+-  double_y = RFLOAT_VALUE(rb_funcall(y, id_method_to_f, 0));
++  long long_graph_top_y = FIX2INT(rb_ivar_get(self, id_ivar_graph_top_y));
++  double double_y = RFLOAT_VALUE(rb_funcall(y, id_method_to_f, 0));
+ 
+   if (id_axis == id_LEFT) {
+     double_y_max = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_left_y_max),   id_method_to_f, 0));
+@@ -281,15 +268,10 @@
+  * This function converts an x value to an x coordinate on the graph
+  */
+ static VALUE scale_value_to_graph_x(VALUE self, VALUE x) {
+-  long long_graph_left_x = 0;
+-  double double_x = 0.0;
+-  double double_x_min = 0.0;
+-  double double_x_scale = 0.0;
+-
+-  long_graph_left_x = FIX2INT(rb_ivar_get(self, id_ivar_graph_left_x));
+-  double_x = RFLOAT_VALUE(rb_funcall(x, id_method_to_f, 0));
+-  double_x_min = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_min), id_method_to_f, 0));
+-  double_x_scale = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_scale), id_method_to_f, 0));
++  long long_graph_left_x = FIX2INT(rb_ivar_get(self, id_ivar_graph_left_x));
++  double double_x = RFLOAT_VALUE(rb_funcall(x, id_method_to_f, 0));
++  double double_x_min = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_min), id_method_to_f, 0));
++  double double_x_scale = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_scale), id_method_to_f, 0));
+ 
+   return INT2FIX(scale_value_to_graph_x_internal(double_x, double_x_min, double_x_scale, long_graph_left_x));
+ }
+@@ -301,10 +283,6 @@
+   volatile VALUE result = Qnil;
+   volatile VALUE clipped1 = Qnil;
+   volatile VALUE clipped2 = Qnil;
+-  long x1_scaled = 0;
+-  long y1_scaled = 0;
+-  long x2_scaled = 0;
+-  long y2_scaled = 0;
+   double clipped_x1 = 0.0;
+   double clipped_y1 = 0.0;
+   double clipped_x2 = 0.0;
+@@ -315,10 +293,10 @@
+ 
+   if (result == Qtrue) /* Line is visible so draw it */ {
+     /* Scale to graph coordinates */
+-    x1_scaled = scale_value_to_graph_x_internal(clipped_x1, x_min, x_scale, graph_left_x);
+-    y1_scaled = scale_value_to_graph_y_internal(clipped_y1, y_max, y_scale, graph_top_y);
+-    x2_scaled = scale_value_to_graph_x_internal(clipped_x2, x_min, x_scale, graph_left_x);
+-    y2_scaled = scale_value_to_graph_y_internal(clipped_y2, y_max, y_scale, graph_top_y);
++    double x1_scaled = scale_value_to_graph_x_internal(clipped_x1, x_min, x_scale, graph_left_x);
++    double y1_scaled = scale_value_to_graph_y_internal(clipped_y1, y_max, y_scale, graph_top_y);
++    double x2_scaled = scale_value_to_graph_x_internal(clipped_x2, x_min, x_scale, graph_left_x);
++    double y2_scaled = scale_value_to_graph_y_internal(clipped_y2, y_max, y_scale, graph_top_y);
+ 
+     /* Draw the line */
+     if (RTEST(show_line)) {
+@@ -339,30 +317,20 @@
+  * Draws a line between two points that is clipped to fit the visible graph if necessary
+  */
+ static VALUE draw_line(VALUE self, VALUE dc, VALUE x1, VALUE y1, VALUE x2, VALUE y2, VALUE show_line, VALUE point_size, VALUE axis, VALUE color) {
+-  long long_graph_left_x = 0;
+-  long long_graph_top_y = 0;
+-  ID id_axis = 0;
+-  double double_x1 = 0.0;
+-  double double_y1 = 0.0;
+-  double double_x2 = 0.0;
+-  double double_y2 = 0.0;
+-  double double_x_min = 0.0;
+-  double double_y_min = 0.0;
+-  double double_x_max = 0.0;
+-  double double_y_max = 0.0;
+-  double double_x_scale = 0.0;
+-  double double_y_scale = 0.0;
+-
+-  id_axis = SYM2ID(axis);
+-  double_x_max = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_max), id_method_to_f, 0));
+-  double_x_min = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_min), id_method_to_f, 0));
+-  double_x1 = RFLOAT_VALUE(rb_funcall(x1, id_method_to_f, 0));
+-  double_y1 = RFLOAT_VALUE(rb_funcall(y1, id_method_to_f, 0));
+-  double_x2 = RFLOAT_VALUE(rb_funcall(x2, id_method_to_f, 0));
+-  double_y2 = RFLOAT_VALUE(rb_funcall(y2, id_method_to_f, 0));
+-  double_x_scale = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_scale), id_method_to_f, 0));
+-  long_graph_left_x = FIX2INT(rb_ivar_get(self, id_ivar_graph_left_x));
+-  long_graph_top_y = FIX2INT(rb_ivar_get(self, id_ivar_graph_top_y));
++  double double_y_min;
++  double double_y_max;
++  double double_y_scale;
++
++  ID id_axis = SYM2ID(axis);
++  double double_x_max = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_max), id_method_to_f, 0));
++  double double_x_min = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_min), id_method_to_f, 0));
++  double double_x1 = RFLOAT_VALUE(rb_funcall(x1, id_method_to_f, 0));
++  double double_y1 = RFLOAT_VALUE(rb_funcall(y1, id_method_to_f, 0));
++  double double_x2 = RFLOAT_VALUE(rb_funcall(x2, id_method_to_f, 0));
++  double double_y2 = RFLOAT_VALUE(rb_funcall(y2, id_method_to_f, 0));
++  double double_x_scale = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_scale), id_method_to_f, 0));
++  long long_graph_left_x = FIX2INT(rb_ivar_get(self, id_ivar_graph_left_x));
++  long long_graph_top_y = FIX2INT(rb_ivar_get(self, id_ivar_graph_top_y));
+ 
+   if (id_axis == id_LEFT) {
+     double_y_max = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_left_y_max), id_method_to_f, 0));
+@@ -383,37 +351,28 @@
+  * Draws all lines for the given axis
+  */
+ static VALUE draw_lines (VALUE self, VALUE dc, VALUE axis) {
+-  long long_graph_left_x = 0;
+-  long long_graph_top_y = 0;
+-  long num_lines = 0;
+   long line_index = 0;
+   long line_length = 0;
+   long point_index = 0;
+-  ID id_axis = 0;
+   volatile VALUE lines = Qnil;
+   volatile VALUE line = Qnil;
+   volatile VALUE x_values = Qnil;
+   volatile VALUE y_values = Qnil;
+   volatile VALUE color = Qnil;
+-  volatile VALUE show_lines = Qnil;
+-  volatile VALUE point_size = Qnil;
+-  double double_x1 = 0.0;
+-  double double_y1 = 0.0;
+-  double double_x2 = 0.0;
+-  double double_y2 = 0.0;
+-  double double_x_min = 0.0;
+-  double double_y_min = 0.0;
+-  double double_x_max = 0.0;
+-  double double_y_max = 0.0;
+-  double double_x_scale = 0.0;
+-  double double_y_scale = 0.0;
+-
+-  id_axis = SYM2ID(axis);
+-  double_x_max = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_max), id_method_to_f, 0));
+-  double_x_min = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_min), id_method_to_f, 0));
+-  double_x_scale = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_scale), id_method_to_f, 0));
+-  long_graph_left_x = FIX2INT(rb_ivar_get(self, id_ivar_graph_left_x));
+-  long_graph_top_y = FIX2INT(rb_ivar_get(self, id_ivar_graph_top_y));
++  double double_x1;
++  double double_y1;
++  double double_x2;
++  double double_y2;
++  double double_y_min;
++  double double_y_max;
++  double double_y_scale;
++
++  ID id_axis = SYM2ID(axis);
++  double double_x_max = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_max), id_method_to_f, 0));
++  double double_x_min = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_min), id_method_to_f, 0));
++  double double_x_scale = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_x_scale), id_method_to_f, 0));
++  long long_graph_left_x = FIX2INT(rb_ivar_get(self, id_ivar_graph_left_x));
++  long long_graph_top_y = FIX2INT(rb_ivar_get(self, id_ivar_graph_top_y));
+ 
+   if (id_axis == id_LEFT) {
+     lines = rb_funcall(rb_ivar_get(self, id_ivar_lines), id_method_left, 0);
+@@ -427,10 +386,10 @@
+     double_y_scale = RFLOAT_VALUE(rb_funcall(rb_ivar_get(self, id_ivar_right_y_scale), id_method_to_f, 0));
+   }
+ 
+-  show_lines = rb_ivar_get(self, id_ivar_show_lines);
+-  point_size = rb_ivar_get(self, id_ivar_point_size);
++  volatile VALUE show_lines = rb_ivar_get(self, id_ivar_show_lines);
++  volatile VALUE point_size = rb_ivar_get(self, id_ivar_point_size);
+ 
+-  num_lines = RARRAY_LEN(lines);
++  long num_lines = RARRAY_LEN(lines);
+   for (line_index = 0; line_index < num_lines; line_index++) {
+     line = rb_ary_entry(lines, line_index);
+     x_values = rb_ary_entry(line, 0);
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/ext/cosmos/ext/platform/platform.c cosmos-4.5.3/ext/cosmos/ext/platform/platform.c
+--- cosmos-4.5.0/ext/cosmos/ext/platform/platform.c	2026-10-08 22:05:33.262029843 +0000
++++ cosmos-4.5.3/ext/cosmos/ext/platform/platform.c	2023-01-02 08:33:25.268705981 +0000
+@@ -23,31 +23,64 @@
+   #include <signal.h>
+   #include <unistd.h>
+   #include <time.h>
++  #include <string.h>
++  #include <sys/stat.h>
+ 
+   static void catch_sigsegv(int sig_num) {
++    const int FILENAME_LEN = 256;
+     char *cosmos_log_dir = NULL;
+     time_t rawtime;
+-    struct tm *timeinfo;
+-    char filename[256];
++    struct tm timeinfo;
++    struct tm *timeinfo_ptr;
++    struct stat stats;
++    char filename[FILENAME_LEN];
+     FILE* file = NULL;
+ 
+     signal(SIGSEGV, SIG_DFL);
+     signal(SIGILL, SIG_DFL);
+ 
+     cosmos_log_dir = getenv("COSMOS_LOGS_DIR");
+-    if (cosmos_log_dir == NULL) {
+-      cosmos_log_dir = (char*) ".";
++    // If the COSMOS_LOGS_DIR env var isn't set or if it's too big set to "."
++    // NOTE: The filename buffer will be written to by snprintf which appends
++    // a null terminator so we have 1 less byte available minus the length
++    // of the fixed filename structure
++    if ((cosmos_log_dir == NULL) || (strlen(cosmos_log_dir) > (FILENAME_LEN - 1 - strlen("/YYYY_MM_DD_HH_MM_SS_segfault.txt"))))
++    {
++      cosmos_log_dir = (char*)".";
+     }
++    // Validate that we can write to this directory
++    if (stat(cosmos_log_dir, &stats) == 0)
++    {
++      if (!((stats.st_mode & W_OK)&& S_ISDIR(stats.st_mode)))
++      {
++        cosmos_log_dir = (char *)".";
++      }
++    }
++    else
++    {
++      cosmos_log_dir = (char *)".";
++    }
++
+     time(&rawtime);
+-    timeinfo = localtime(&rawtime);
+-    sprintf(filename, "%s/%04u_%02u_%02u_%02u_%02u_%02u_segfault.txt",
+-      cosmos_log_dir,
+-      1900 + timeinfo->tm_year,
+-      1 + timeinfo->tm_mon,
+-      timeinfo->tm_mday,
+-      timeinfo->tm_hour,
+-      timeinfo->tm_min,
+-      timeinfo->tm_sec);
++    timeinfo_ptr = localtime_r(&rawtime, &timeinfo);
++    if (timeinfo_ptr == NULL)
++    {
++      // If localtime returns NULL we set our own and set to 1919 to make it interesting
++      strptime("1919-01-01 00:00:00", "%Y-%m-%d %H:%M:%S", &timeinfo);
++    }
++    snprintf(filename, FILENAME_LEN, "%s/%04u_%02u_%02u_%02u_%02u_%02u_segfault.txt",
++            cosmos_log_dir,
++            1900 + timeinfo.tm_year,
++            1 + timeinfo.tm_mon,
++            timeinfo.tm_mday,
++            timeinfo.tm_hour,
++            timeinfo.tm_min,
++            timeinfo.tm_sec);
++
++    // Fortify warns about Path Manipulation here. We explictly allow this to let
++    // segfault files be written to a directory of their choosing.
++    // The input is validated above for length and to ensure it is a writable directory.
++    // If the checks fail the directory is set to the current directory without additional info.
+     file = freopen(filename, "a", stderr);
+     /* Using file removes a warning */
+     if (file) {
+@@ -58,11 +91,12 @@
+   }
+ #endif
+ 
+-static VALUE segfault(VALUE self) {
+-  char *a = 0;
+-  *a = 50;
+-  return Qnil;
+-}
++/* NOTE: Uncomment and rebuilt for testing the handler */
++// static VALUE segfault(VALUE self) {
++//   char *a = 0;
++//   *a = 50;
++//   return Qnil;
++// }
+ 
+ /*
+  * Initialize methods for Platform specific C code
+@@ -95,7 +129,8 @@
+   signal(SIGILL, catch_sigsegv);
+ #endif
+ 
+-  mCosmos = rb_define_module("Cosmos");
+-  cSegFault = rb_define_class_under(mCosmos, "SegFault", rb_cObject);
+-  rb_define_singleton_method(cSegFault, "segfault", segfault, 0);
++  /* NOTE: Uncomment and rebuilt for testing the handler */
++  // mCosmos = rb_define_module("Cosmos");
++  // cSegFault = rb_define_class_under(mCosmos, "SegFault", rb_cObject);
++  // rb_define_singleton_method(cSegFault, "segfault", segfault, 0);
+ }
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/ext/cosmos/ext/polynomial_conversion/polynomial_conversion.c cosmos-4.5.3/ext/cosmos/ext/polynomial_conversion/polynomial_conversion.c
+--- cosmos-4.5.0/ext/cosmos/ext/polynomial_conversion/polynomial_conversion.c	2026-10-08 22:05:33.262029843 +0000
++++ cosmos-4.5.3/ext/cosmos/ext/polynomial_conversion/polynomial_conversion.c	2023-01-02 08:33:25.269705981 +0000
+@@ -30,20 +30,16 @@
+  */
+ static VALUE polynomial_conversion_call(VALUE self, VALUE value, VALUE myself, VALUE buffer)
+ {
+-  volatile VALUE coeffs = Qnil;
+-  long coeffs_length = 0;
+   int index = 0;
+-  double double_value = 0.0;
+-  double coeff = 0.0;
+   double converted = 0.0;
+   double raised_to_power = 1.0;
+ 
+-  coeffs = rb_ivar_get(self, id_ivar_coeffs);
+-  coeffs_length = RARRAY_LEN(coeffs);
+-  double_value = RFLOAT_VALUE(rb_funcall(value, id_method_to_f, 0));
++  volatile VALUE coeffs = rb_ivar_get(self, id_ivar_coeffs);
++  long coeffs_length = RARRAY_LEN(coeffs);
++  double double_value = RFLOAT_VALUE(rb_funcall(value, id_method_to_f, 0));
+ 
+   /* Handle C0 */
+-  coeff = RFLOAT_VALUE(rb_ary_entry(coeffs, 0));
++  double coeff = RFLOAT_VALUE(rb_ary_entry(coeffs, 0));
+   converted += coeff;
+ 
+   /* Handle Coefficients raised to a power */
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/ext/cosmos/ext/structure/structure.c cosmos-4.5.3/ext/cosmos/ext/structure/structure.c
+--- cosmos-4.5.0/ext/cosmos/ext/structure/structure.c	2026-10-08 22:05:33.262029843 +0000
++++ cosmos-4.5.3/ext/cosmos/ext/structure/structure.c	2023-01-02 08:33:25.270705981 +0000
+@@ -84,6 +84,9 @@
+ static VALUE symbol_SATURATE = Qnil;
+ static VALUE symbol_ERROR = Qnil;
+ static VALUE symbol_ERROR_ALLOW_HEX = Qnil;
++static VALUE symbol_LITTLE_16 = Qnil;
++static VALUE symbol_LITTLE_32 = Qnil;
++static VALUE symbol_DEFAULT_ALIGNMENT = Qnil;
+ 
+ /*
+  * Perform an left bit shift on a string
+@@ -424,12 +427,36 @@
+  * @param endianness [Symbol] {ENDIANNESS}
+  * @return [Integer] value read from the buffer
+  */
+-static VALUE binary_accessor_read(VALUE self, VALUE param_bit_offset, VALUE param_bit_size, VALUE param_data_type, VALUE param_buffer, VALUE param_endianness)
++static VALUE binary_accessor_read(VALUE self, VALUE param_bit_offset, VALUE param_bit_size, VALUE param_data_type, VALUE param_buffer, VALUE param_endianness, VALUE alignment )
+ {
+   /* Convert Parameters to C Data Types */
+   int bit_offset = FIX2INT(param_bit_offset);
+   int bit_size = FIX2INT(param_bit_size);
+ 
++  int start_alignment;
++  int end_alignment;
++  int shift_amount;
++
++  unsigned short mask_value_us;
++  unsigned short mask_value_pos_us;
++  unsigned short mask_value_neg_us;
++  unsigned short end_value_us;
++  unsigned short temp_data_us;
++  
++  unsigned int mask_value_ui;
++  unsigned int mask_value_pos_ui;
++  unsigned int mask_value_neg_ui;
++  unsigned int end_value_ui;
++  unsigned int temp_data_ui;
++  
++#if 0 /*64 bit return is not supported from this function A.M.G*/
++  unsigned long long int mask_value_lui;
++  unsigned long long int mask_value_pos_lui;
++  unsigned long long int mask_value_neg_lui;
++  unsigned long long int end_value_lui;
++  unsigned long long int temp_data_lui;
++#endif
++
+   /* Local Variables */
+   int given_bit_offset = bit_offset;
+   int given_bit_size = bit_size;
+@@ -493,6 +520,9 @@
+     if (BYTE_ALIGNED(bit_offset)) {
+       string_length = upper_bound - lower_bound + 1;
+       string = malloc(string_length + 1);
++      if (string == NULL) {
++        rb_raise(rb_eNoMemError, "malloc of %d returned NULL", string_length + 1);
++      }
+       memcpy(string, buffer + lower_bound, string_length);
+       string[string_length] = 0;
+       if (param_data_type == symbol_STRING) {
+@@ -538,6 +568,9 @@
+       string_length = ((bit_size - 1)/ 8) + 1;
+       array_length = string_length + 4; /* Required number of bytes plus slack */
+       unsigned_char_array = (unsigned char*) malloc(array_length);
++      if (unsigned_char_array == NULL) {
++        rb_raise(rb_eNoMemError, "malloc of %d returned NULL", array_length);
++      }
+       read_bitfield(lower_bound, upper_bound, bit_offset, bit_size, given_bit_offset, given_bit_size, param_endianness, buffer, (int)buffer_length, unsigned_char_array);
+ 
+       num_words = ((string_length - 1) / 4) + 1;
+@@ -596,7 +629,7 @@
+       free(unsigned_char_array);
+     }
+ 
+-  } else if (param_data_type == symbol_UINT) {
++  } else if (param_data_type == symbol_UINT && alignment==symbol_DEFAULT_ALIGNMENT) {
+     /*###################################
+      *# Handle :UINT data type
+      *###################################*/
+@@ -629,6 +662,9 @@
+       string_length = ((bit_size - 1)/ 8) + 1;
+       array_length = string_length + 4; /* Required number of bytes plus slack */
+       unsigned_char_array = (unsigned char*) malloc(array_length);
++      if (unsigned_char_array == NULL) {
++        rb_raise(rb_eNoMemError, "malloc of %d returned NULL", array_length);
++      }
+       read_bitfield(lower_bound, upper_bound, bit_offset, bit_size, given_bit_offset, given_bit_size, param_endianness, buffer, (int)buffer_length, unsigned_char_array);
+ 
+       num_words = ((string_length - 1) / 4) + 1;
+@@ -676,8 +712,51 @@
+ 
+       free(unsigned_char_array);
+     }
+-
+-  } else if (param_data_type == symbol_FLOAT) {
++     //rb_raise(rb_eArgError, "strcmpDEFAULT %s %d %d %d",RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)),ID2SYM(rb_intern(RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)))),symbol_LITTLE_16,alignment );
++  }
++   else if (param_data_type == symbol_UINT && alignment==symbol_LITTLE_16)
++   {
++         start_alignment =(bit_offset-(bit_offset%16))/8;
++         end_alignment   =start_alignment+1;
++         shift_amount    =(bit_offset-(bit_offset%16)+16)-(bit_offset+bit_size);
++         mask_value_us      =((1<<bit_size)-1);
++         mask_value_pos_us  =(0x0000^(mask_value_us<<shift_amount));
++         mask_value_neg_us  =(0xFFFF^(mask_value_us<<shift_amount));
++         memcpy(&temp_data_us,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data_us ));
++
++         temp_data_us = mask_value_pos_us&temp_data_us;
++         end_value_us = temp_data_us>>shift_amount;
++         //printf("LITTLE 16 bit_o=%d bit_size=%d shift_amount=%d mas_val_pos=%04x %d \n",bit_offset,bit_size,shift_amount,mask_value_pos,end_value);
++
++         end_value_us = end_value_us*2;
++         end_value_us = end_value_us+=1;
++         return_value=end_value_us;
++
++         //rb_raise(rb_eArgError, "strcmp16 %s %d %d %d",RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)),ID2SYM(rb_intern(RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)))),symbol_LITTLE_16,alignment );
++
++
++   }
++   else if (param_data_type == symbol_UINT && alignment==symbol_LITTLE_32)
++   {       
++         start_alignment =(bit_offset-(bit_offset%32))/8;
++         end_alignment   =start_alignment+1;
++         shift_amount    =(bit_offset-(bit_offset%32)+32)-(bit_offset+bit_size);
++         mask_value_ui      =((1<<bit_size)-1);
++         mask_value_pos_ui  =(0x00000000^(mask_value_ui<<shift_amount));
++         mask_value_neg_ui  =(0xFFFFFFFF^(mask_value_ui<<shift_amount));
++         memcpy(&temp_data_ui,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data_ui ));
++
++         temp_data_ui = mask_value_pos_ui&temp_data_ui;
++         end_value_ui = temp_data_ui>>shift_amount;
++         //printf("LITTLE 32 bit_o=%d bit_size=%d shift_amount=%d mas_val_pos=%04x %d \n",bit_offset,bit_size,shift_amount,mask_value_pos,end_value);
++
++         end_value_ui = end_value_ui*2;
++         end_value_ui = end_value_ui+=1;
++         return_value=end_value_ui;
++
++         //rb_raise(rb_eArgError, "strcmp32 %s %d %d %d",RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)),ID2SYM(rb_intern(RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)))),symbol_LITTLE_32,alignment );
++   }   
++   else if (param_data_type == symbol_FLOAT) {
+     /*##########################
+      *# Handle :FLOAT data type
+      *##########################*/
+@@ -706,6 +785,8 @@
+     /*############################
+      *# Handle Unknown data types
+      *############################*/
++    //rb_raise(rb_eArgError, "%d %d ", param_data_type == symbol_UINT , alignment==symbol_LITTLE_16);
++    //rb_raise(rb_eArgError, "data_type_1 %s and %s is not recognized", RSTRING_PTR(rb_funcall(param_data_type, id_method_to_s, 0)),RSTRING_PTR(rb_funcall(alignment, id_method_to_s, 0)));
+ 
+     rb_raise(rb_eArgError, "data_type %s is not recognized", RSTRING_PTR(rb_funcall(param_data_type, id_method_to_s, 0)));
+   }
+@@ -827,7 +908,7 @@
+  * @param endianness [Symbol] {ENDIANNESS}
+  * @return [Integer] value read from the buffer
+  */
+-static VALUE binary_accessor_write(VALUE self, VALUE value, VALUE param_bit_offset, VALUE param_bit_size, VALUE param_data_type, VALUE param_buffer, VALUE param_endianness, VALUE param_overflow)
++static VALUE binary_accessor_write(VALUE self, VALUE value, VALUE param_bit_offset, VALUE param_bit_size, VALUE param_data_type, VALUE param_buffer, VALUE param_endianness, VALUE param_overflow, VALUE alignment)
+ {
+   /* Convert Parameters to C Data Types */
+   int bit_offset = NUM2INT(param_bit_offset);
+@@ -835,6 +916,29 @@
+   /* Local Variables */
+   int given_bit_offset = bit_offset;
+   int given_bit_size = bit_size;
++  int start_alignment;
++  int end_alignment;
++  int shift_amount;
++
++  unsigned short mask_value_us;
++  unsigned short mask_value_pos_us;
++  unsigned short mask_value_neg_us;
++  unsigned short end_value_us;
++  unsigned short temp_data_us;
++  
++  unsigned int mask_value_ui;
++  unsigned int mask_value_pos_ui;
++  unsigned int mask_value_neg_ui;
++  unsigned int end_value_ui;
++  unsigned int temp_data_ui;
++  
++#if 0 /*64 bit return is not supported from this function A.M.G*/
++  unsigned long long int mask_value_lui;
++  unsigned long long int mask_value_pos_lui;
++  unsigned long long int mask_value_neg_lui;
++  unsigned long long int end_value_lui;
++  unsigned long long int temp_data_lui;
++#endif
+   int upper_bound = 0;
+   int lower_bound = 0;
+   int end_bytes = 0;
+@@ -959,10 +1063,11 @@
+     /*###################################
+      *# Handle :INT data type
+      *###################################*/
+-    value = rb_funcall(rb_mKernel, id_method_Integer, 1, value);
+ 
+-    if ((BYTE_ALIGNED(bit_offset)) && (even_bit_size(bit_size)))
++    if ((BYTE_ALIGNED(bit_offset)) && (even_bit_size(bit_size)) && alignment==symbol_DEFAULT_ALIGNMENT)
+     {
++       value = rb_funcall(rb_mKernel, id_method_Integer, 1, value);
++
+       /*###########################################################
+        *# Handle byte-aligned 8, 16, 32, and 64 bit
+        *###########################################################*/
+@@ -992,15 +1097,19 @@
+       rb_str_modify(param_buffer);
+       memcpy((RSTRING_PTR(param_buffer) + lower_bound), &c_value, bit_size / 8);
+ 
+-    } else {
++    } else if(alignment==symbol_DEFAULT_ALIGNMENT || param_endianness == symbol_BIG_ENDIAN) {
+       /*###########################################################
+        *# Handle bit fields
+        *###########################################################*/
++      value = rb_funcall(rb_mKernel, id_method_Integer, 1, value);
+       value = check_overflow(value, bit_size, param_data_type, param_overflow);
+ 
+       string_length = ((bit_size - 1)/ 8) + 1;
+       array_length = string_length + 4; /* Required number of bytes plus slack */
+       unsigned_char_array = (unsigned char*) malloc(array_length);
++      if (unsigned_char_array == NULL) {
++        rb_raise(rb_eNoMemError, "malloc of %d returned NULL", array_length);
++      }
+ 
+       num_words = ((string_length - 1) / 4) + 1;
+       num_bytes = num_words * 4;
+@@ -1049,6 +1158,37 @@
+ 
+       free(unsigned_char_array);
+     }
++    else if( alignment==symbol_LITTLE_16 )
++    {
++
++         start_alignment =(bit_offset-(bit_offset%16))/8;
++         end_alignment   =start_alignment+1;
++         shift_amount    =(bit_offset-(bit_offset%16)+16)-(bit_offset+bit_size);
++         mask_value_us      =((1<<bit_size)-1);
++         mask_value_pos_us  =(0x0000^(mask_value_us<<shift_amount));
++         mask_value_neg_us  =(0xFFFF^(mask_value_us<<shift_amount));
++         end_value_us       =mask_value_pos_us&(((value-1)/2)<<shift_amount);
++         rb_str_modify(param_buffer);
++         memcpy(&temp_data_us,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data_us ));
++         temp_data_us = mask_value_neg_us&temp_data_us;
++         temp_data_us = temp_data_us | end_value_us;
++         memcpy(&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),&temp_data_us,sizeof(temp_data_us));
++    }
++    else if( alignment==symbol_LITTLE_32 )
++    {
++         start_alignment =(bit_offset-(bit_offset%32))/8;
++         end_alignment   =start_alignment+1;
++         shift_amount    =(bit_offset-(bit_offset%32)+32)-(bit_offset+bit_size);
++         mask_value_ui      =((1<<bit_size)-1);
++         mask_value_pos_ui  =(0x00000000^(mask_value_ui<<shift_amount));
++         mask_value_neg_ui  =(0xFFFFFFFF^(mask_value_ui<<shift_amount));
++         end_value_ui       =mask_value_pos_ui&(((value-1)/2)<<shift_amount);
++         rb_str_modify(param_buffer);
++         memcpy(&temp_data_ui,&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),sizeof(temp_data_ui ));
++         temp_data_ui = mask_value_neg_ui&temp_data_ui;
++         temp_data_ui = temp_data_ui | end_value_ui;
++         memcpy(&(((unsigned char*) RSTRING_PTR(param_buffer))[start_alignment]),&temp_data_ui,sizeof(temp_data_ui));
++    }
+ 
+   } else if (param_data_type == symbol_FLOAT) {
+     /*##########################
+@@ -1119,7 +1259,7 @@
+   return INT2FIX(get_int_length(self));
+ }
+ 
+-static VALUE read_item_internal(VALUE self, VALUE item, VALUE buffer) {
++static VALUE read_item_internal(VALUE self, VALUE item, VALUE buffer, VALUE alignment ) {
+   volatile VALUE bit_offset = Qnil;
+   volatile VALUE bit_size = Qnil;
+   volatile VALUE data_type = Qnil;
+@@ -1139,7 +1279,7 @@
+     if (RTEST(array_size)) {
+       return rb_funcall(cBinaryAccessor, id_method_read_array, 6, bit_offset, bit_size, data_type, array_size, buffer, endianness);
+     } else {
+-      return binary_accessor_read(cBinaryAccessor, bit_offset, bit_size, data_type, buffer, endianness);
++      return binary_accessor_read(cBinaryAccessor, bit_offset, bit_size, data_type, buffer, endianness, alignment);
+     }
+   } else {
+     rb_raise(rb_eRuntimeError, "No buffer given to read_item");
+@@ -1160,25 +1300,26 @@
+ {
+   volatile VALUE item = Qnil;
+   volatile VALUE buffer = Qnil;
+-
++  volatile VALUE alignment = Qnil;
+   switch (argc)
+   {
+-    case 1:
+     case 2:
++    case 3:
+       item = argv[0];
+       buffer = rb_ivar_get(self, id_ivar_buffer);
+       break;
+-    case 3:
++    case 4:
+       item = argv[0];
+       buffer = argv[2];
++      alignment = argv[3];
+       break;
+     default:
+       /* Invalid number of arguments given */
+-      rb_raise(rb_eArgError, "wrong number of arguments (%d for 1..3)", argc);
++      rb_raise(rb_eArgError, "wrong number of arguments (%d for 2..4)", argc);
+       break;
+   };
+ 
+-  return read_item_internal(self, item, buffer);
++  return read_item_internal(self, item, buffer, alignment);
+ }
+ 
+ /*
+@@ -1450,6 +1591,9 @@
+   symbol_SATURATE = ID2SYM(rb_intern("SATURATE"));
+   symbol_ERROR = ID2SYM(rb_intern("ERROR"));
+   symbol_ERROR_ALLOW_HEX = ID2SYM(rb_intern("ERROR_ALLOW_HEX"));
++  symbol_LITTLE_16 = ID2SYM(rb_intern("LITTLE_16"));
++  symbol_LITTLE_32 = ID2SYM(rb_intern("LITTLE_32"));
++  symbol_DEFAULT_ALIGNMENT = ID2SYM(rb_intern("DEFAULT_ALIGNMENT"));
+ 
+   if ((*((char *) &endianness_check)) == 1) {
+     HOST_ENDIANNESS = symbol_LITTLE_ENDIAN;
+@@ -1457,8 +1601,8 @@
+     HOST_ENDIANNESS = symbol_BIG_ENDIAN;
+   }
+ 
+-  rb_define_singleton_method(cBinaryAccessor, "read", binary_accessor_read, 5);
+-  rb_define_singleton_method(cBinaryAccessor, "write", binary_accessor_write, 7);
++  rb_define_singleton_method(cBinaryAccessor, "read", binary_accessor_read, 6);
++  rb_define_singleton_method(cBinaryAccessor, "write", binary_accessor_write, 8);
+ 
+   cStructure = rb_define_class_under(mCosmos, "Structure", rb_cObject);
+   id_const_ZERO_STRING = rb_intern("ZERO_STRING");
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/Gemfile cosmos-4.5.3/Gemfile
+--- cosmos-4.5.0/Gemfile	2026-10-08 22:05:33.018031860 +0000
++++ cosmos-4.5.3/Gemfile	2023-01-02 08:33:24.824705983 +0000
+@@ -8,4 +8,4 @@
+ #  gem 'wdm', '>= 0.1.0', :platforms => [:mswin, :mingw]
+ #end
+ gemspec
+-instance_eval File.read(File.join(__dir__, 'install/config/dart/Gemfile'))
++instance_eval File.read(File.join(__dir__, 'install/config/dart/Gemfile')) unless ENV['CI']
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/.github/workflows/build_v4.yml cosmos-4.5.3/.github/workflows/build_v4.yml
+--- cosmos-4.5.0/.github/workflows/build_v4.yml	1970-01-01 00:00:00.000000000 +0000
++++ cosmos-4.5.3/.github/workflows/build_v4.yml	2023-01-02 08:33:24.822705983 +0000
+@@ -0,0 +1,33 @@
++# This workflow uses actions that are not certified by GitHub.
++# They are provided by a third-party and are governed by
++# separate terms of service, privacy policy, and support
++# documentation.
++# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
++# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
++
++# Reference environment variables: https://docs.github.com/en/actions/reference/environment-variables
++
++name: Cosmos 4 Tests
++
++on:
++  push:
++    branches: [cosmos4]
++  pull_request:
++    branches: [cosmos4]
++
++jobs:
++  test:
++    runs-on: ubuntu-18.04
++    strategy:
++      matrix:
++        ruby-version: ["2.5", "2.6"]
++    steps:
++      - uses: actions/checkout@v2
++      - uses: ruby/setup-ruby@v1
++        with:
++          ruby-version: ${{ matrix.ruby-version }}
++          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
++      - name: Run tests
++        run: bundle exec rake build spec
++        env:
++          COSMOS_DEVEL: ${GITHUB_WORKSPACE}\.
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/install/Rakefile cosmos-4.5.3/install/Rakefile
+--- cosmos-4.5.0/install/Rakefile	2026-10-08 22:05:33.262029843 +0000
++++ cosmos-4.5.3/install/Rakefile	2023-01-02 08:33:25.282705981 +0000
+@@ -39,14 +39,14 @@
+   crc = Cosmos::Crc32.new(Cosmos::Crc32::DEFAULT_POLY, Cosmos::Crc32::DEFAULT_SEED, true, false)
+   File.open("config/data/crc.txt",'w') do |file|
+     file.puts "USER_MODIFIED" unless official
+-    Dir[File.join('lib','**','*')].each do |filename|
++    Dir[File.join('lib','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('config','**','*')].each do |filename|
++    Dir[File.join('config','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       next if File.basename(filename) == 'crc.txt'
+@@ -54,14 +54,14 @@
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('tools','**','*')].each do |filename|
++    Dir[File.join('tools','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('procedures','**','*')].each do |filename|
++    Dir[File.join('procedures','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/config/config_parser.rb cosmos-4.5.3/lib/cosmos/config/config_parser.rb
+--- cosmos-4.5.0/lib/cosmos/config/config_parser.rb	2026-10-08 22:05:33.338029227 +0000
++++ cosmos-4.5.3/lib/cosmos/config/config_parser.rb	2023-01-02 08:33:25.382705982 +0000
+@@ -149,16 +149,8 @@
+       raise Error.new(self, "Partial name '#{template_name}' must begin with an underscore.") if File.basename(template_name)[0] != '_'
+       b = binding
+       if options[:locals]
+-        if RUBY_VERSION.split('.')[0..1].join.to_i >= 21
+-          options[:locals].each {|key, value| b.local_variable_set(key, value) }
+-        else
+-          options[:locals].each do |key, value|
+-            if value.is_a? String
+-              b.eval("#{key} = '#{value}'")
+-            else
+-              b.eval("#{key} = #{value}")
+-            end
+-          end
++        options[:locals].each do |key, value|
++          b.local_variable_set(key, value)
+         end
+       end
+       # Assume the file is there. If not we raise a pretty obvious error
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/core_ext/class.rb cosmos-4.5.3/lib/cosmos/core_ext/class.rb
+--- cosmos-4.5.0/lib/cosmos/core_ext/class.rb	2026-10-08 22:05:33.338029227 +0000
++++ cosmos-4.5.3/lib/cosmos/core_ext/class.rb	2023-01-02 08:33:25.389705982 +0000
+@@ -35,6 +35,11 @@
+   #   instance variables with class method readers
+   def instance_attr_reader(*args)
+     args.each do |arg|
++      # Non-word characters (letter, number, underscore) are disallowed
++      raise ArgumentError, "Non-word characters characters parsed" if arg =~ /\W/
++
++      # Fortify: Dynamic Code Evaluation: Code Injection
++      # This is true but we're whitelisting the input above
+       self.class_eval("def #{arg};@#{arg};end")
+       self.instance_eval("def #{arg};self.instance.#{arg};end")
+     end
+@@ -44,6 +49,11 @@
+   #   instance variables with class method accessors (read and write)
+   def instance_attr_accessor(*args)
+     args.each do |arg|
++      # Non-word characters (letter, number, underscore) are disallowed
++      raise ArgumentError, "Non-word characters characters parsed" if arg =~ /\W/
++
++      # Fortify: Dynamic Code Evaluation: Code Injection
++      # This is true but we're whitelisting the input above
+       self.class_eval("def #{arg};@#{arg};end")
+       self.instance_eval("def #{arg};self.instance.#{arg};end")
+       self.class_eval("def #{arg}=(arg);@#{arg} = arg;end")
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/core_ext/time.rb cosmos-4.5.3/lib/cosmos/core_ext/time.rb
+--- cosmos-4.5.0/lib/cosmos/core_ext/time.rb	2026-10-08 22:05:33.348029149 +0000
++++ cosmos-4.5.3/lib/cosmos/core_ext/time.rb	2023-01-02 08:33:25.393705982 +0000
+@@ -88,9 +88,9 @@
+   # use_utc flag.
+   def sys
+     if @@use_utc
+-      self.utc
++      self.dup.utc
+     else
+-      self.localtime
++      self.dup.localtime
+     end
+   end
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/dart/lib/dart_common.rb cosmos-4.5.3/lib/cosmos/dart/lib/dart_common.rb
+--- cosmos-4.5.0/lib/cosmos/dart/lib/dart_common.rb	2026-10-08 22:05:33.359029055 +0000
++++ cosmos-4.5.3/lib/cosmos/dart/lib/dart_common.rb	2023-01-02 08:33:25.424705981 +0000
+@@ -291,11 +291,11 @@
+         reader.open(packet_log.filename)
+         @plr_cache[packet_log.id] = reader
+       end
+-      packet = reader.read_at_offset(ple.data_offset) 
++      packet = reader.read_at_offset(ple.data_offset)
+       unless packet
+         Cosmos::Logger.error("Failed to read at offset #{ple.data_offset} (file offset: #{reader.bytes_read}) with file size #{reader.size}")
+       end
+-      return packet 
++      return packet
+     rescue Exception => error
+       Cosmos::Logger.error("Error Reading Packet Log Entry:\n#{error.formatted}")
+       return nil
+@@ -668,7 +668,7 @@
+     end
+     model.reset_column_information
+     model_name = table_name.upcase
+-    Cosmos.send(:remove_const, model_name) if Cosmos.const_defined?(model_name)
++    Cosmos.public_send(:remove_const, model_name) if Cosmos.const_defined?(model_name)
+     Cosmos.const_set(model_name, model)
+   end
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/dart/spec/dart/dart_database_cleaner_spec.rb cosmos-4.5.3/lib/cosmos/dart/spec/dart/dart_database_cleaner_spec.rb
+--- cosmos-4.5.0/lib/cosmos/dart/spec/dart/dart_database_cleaner_spec.rb	2026-10-08 22:05:33.359029055 +0000
++++ cosmos-4.5.3/lib/cosmos/dart/spec/dart/dart_database_cleaner_spec.rb	2023-01-02 08:33:25.428705983 +0000
+@@ -189,7 +189,7 @@
+       end
+       model.reset_column_information
+       model_name = table_name.upcase
+-      Cosmos.send(:remove_const, model_name) if Cosmos.const_defined?(model_name)
++      Cosmos.public_send(:remove_const, model_name) if Cosmos.const_defined?(model_name)
+       Cosmos.const_set(model_name, model)
+ 
+       expect(model.column_names).to include("delete_me")
+@@ -205,7 +205,7 @@
+         end
+         model.reset_column_information
+         model_name = table_name.upcase
+-        Cosmos.send(:remove_const, model_name) if Cosmos.const_defined?(model_name)
++        Cosmos.public_send(:remove_const, model_name) if Cosmos.const_defined?(model_name)
+         Cosmos.const_set(model_name, model)
+ 
+         expect(model.column_names).to include("delete_me")
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/gui/line_graph/line_graph.rb cosmos-4.5.3/lib/cosmos/gui/line_graph/line_graph.rb
+--- cosmos-4.5.0/lib/cosmos/gui/line_graph/line_graph.rb	2026-10-08 22:05:33.372028955 +0000
++++ cosmos-4.5.3/lib/cosmos/gui/line_graph/line_graph.rb	2026-09-20 19:14:53.080574245 +0000
+@@ -66,6 +66,13 @@
+     attr_accessor_with_redraw :label_and_border_color
+     # Graph Title Text
+     attr_accessor_with_redraw :title
++
++    # Graph Title Text Update
++    def title=(value)
++        @title = value ? value.sub(/\A.*?\s/, '') : nil
++        @redraw_needed = true
++    end
++    
+     # X axis and left and right Y axis text
+     attr_accessor_with_redraw :x_axis_title, :left_y_axis_title, :right_y_axis_title
+     # Maximum number of characters to show for a x and y axis label
+@@ -200,7 +207,7 @@
+       @font = Cosmos.getFont("Helvetica", @font_size)
+ 
+       # The font class used for titles
+-      @title_font = Cosmos.getFont("Helvetica", @font_size + 4, Qt::Font::Bold)
++      @title_font = Cosmos.getFont("Helvetica", @font_size + 0, Qt::Font::Bold)
+ 
+       # Auto scale left y-axis setting
+       @left_y_auto_scale = true
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/gui/qt.rb cosmos-4.5.3/lib/cosmos/gui/qt.rb
+--- cosmos-4.5.0/lib/cosmos/gui/qt.rb	2026-10-08 22:05:33.372028955 +0000
++++ cosmos-4.5.3/lib/cosmos/gui/qt.rb	2023-01-02 08:33:25.453705980 +0000
+@@ -101,22 +101,22 @@
+     return color_r if (color_r.is_a? Qt::Color) || (color_r.is_a? Qt::Pen) || (color_r.is_a? Qt::LinearGradient)
+ 
+     color = nil
+-    key = color_r
+-    key = key.to_i if key.is_a? Qt::Enum
++    color_key = color_r
++    color_key = color_key.to_i if color_key.is_a? Qt::Enum
+ 
+     if color_r && color_g && color_b
+-      key = (color_r.to_i << 24) + (color_g.to_i << 16) + (color_b.to_i << 8)
++      color_key = (color_r.to_i << 24) + (color_g.to_i << 16) + (color_b.to_i << 8)
+     end
+ 
+-    if Cosmos::COLORS[key]
+-      color = Cosmos::COLORS[key]
++    if Cosmos::COLORS[color_key]
++      color = Cosmos::COLORS[color_key]
+     else
+       if color_r && color_g && color_b
+         color = Qt::Color.new(color_r.to_i, color_g.to_i, color_b.to_i)
+       else
+         color = Qt::Color.new(color_r)
+       end
+-      Cosmos::COLORS[key] = color
++      Cosmos::COLORS[color_key] = color
+     end
+     color
+   end
+@@ -214,12 +214,12 @@
+   end
+ 
+   def self.getCursor(shape)
+-    key = shape
+-    key = shape.to_i if shape.is_a? Qt::Enum
+-    cursor = CURSORS[key]
++    shape_key = shape
++    shape_key = shape.to_i if shape.is_a? Qt::Enum
++    cursor = CURSORS[shape_key]
+     unless cursor
+       cursor = Qt::Cursor.new(shape)
+-      CURSORS[key] = cursor
++      CURSORS[shape_key] = cursor
+     end
+     cursor
+   end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/gui/qt_tool.rb cosmos-4.5.3/lib/cosmos/gui/qt_tool.rb
+--- cosmos-4.5.0/lib/cosmos/gui/qt_tool.rb	2026-10-08 22:05:33.372028955 +0000
++++ cosmos-4.5.3/lib/cosmos/gui/qt_tool.rb	2023-01-02 08:33:25.453705980 +0000
+@@ -61,6 +61,7 @@
+       @stylesheet = File.read(app_style) if File.exist? app_style
+ 
+       self.class.normalize_config_options(@options)
++      setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint) if @options.stay_on_top
+ 
+       # Add a banner based on system configuration
+       add_classification_banner
+@@ -350,6 +351,7 @@
+       options.remember_geometry = true
+       options.restore_position = true
+       options.restore_size = true
++      options.stay_on_top = false
+       options.redirect_io = true
+       options.title = "COSMOS Tool"
+       options.config_file = nil
+@@ -401,6 +403,11 @@
+           options.startup_state = :DEFAULT
+         end
+ 
++        # Create the defaultsize option
++        option_parser.on("--stay-on-top", "Force the tool to stay on top of all other windows") do |arg|
++          options.stay_on_top = true
++        end
++
+         # Create the x and y position options
+         option_parser.separator("")
+         option_parser.separator("Window X & Y Position Options:")
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/gui/text/completion_text_edit.rb cosmos-4.5.3/lib/cosmos/gui/text/completion_text_edit.rb
+--- cosmos-4.5.0/lib/cosmos/gui/text/completion_text_edit.rb	2026-10-08 22:05:33.372028955 +0000
++++ cosmos-4.5.3/lib/cosmos/gui/text/completion_text_edit.rb	2023-01-02 08:33:25.456705982 +0000
+@@ -17,6 +17,7 @@
+   # This calss also includes many helper methods to access various
+   # lines, indent selections, highlight lines and center the view.
+   class CompletionTextEdit < Qt::PlainTextEdit
++    attr_accessor :read_only
+     # Create a signal so users of CompletionTextEdit don't have to
+     # subclass in order to listen to keyPressEvents
+     signals 'key_pressed(QKeyEvent*)'
+@@ -47,6 +48,7 @@
+ 
+       @last_hightlighted_line = 1
+       @code_completion = nil
++      @read_only = false
+       begin
+         @code_completion = Completion.new(self)
+       rescue
+@@ -59,7 +61,7 @@
+     end
+ 
+     def column_number
+-      textCursor.positionInBlock + 1
++      #textCursor.positionInBlock + 1
+     end
+ 
+     def current_line
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/interfaces/tcpip_server_interface.rb cosmos-4.5.3/lib/cosmos/interfaces/tcpip_server_interface.rb
+--- cosmos-4.5.0/lib/cosmos/interfaces/tcpip_server_interface.rb	2026-10-08 22:05:33.383028851 +0000
++++ cosmos-4.5.3/lib/cosmos/interfaces/tcpip_server_interface.rb	2023-01-02 08:33:25.464705981 +0000
+@@ -298,10 +298,10 @@
+     def change_raw_logging(method)
+       if @raw_logger_pair
+         @write_interface_infos.each do |interface_info|
+-          interface_info.interface.raw_logger_pair.send(method) if interface_info.interface.raw_logger_pair
++          interface_info.interface.raw_logger_pair.public_send(method) if interface_info.interface.raw_logger_pair
+         end
+         @read_interface_infos.each do |interface_info|
+-          interface_info.interface.raw_logger_pair.send(method) if interface_info.interface.raw_logger_pair
++          interface_info.interface.raw_logger_pair.public_send(method) if interface_info.interface.raw_logger_pair
+         end
+       end
+     end
+@@ -590,7 +590,7 @@
+           need_disconnect = false
+           begin
+             interface_bytes_written = interface_info.interface.bytes_written
+-            interface_info.interface.send(method, packet_or_data)
++            interface_info.interface.public_send(method, packet_or_data)
+             diff = interface_info.interface.bytes_written - interface_bytes_written
+             @written_raw_data_time = interface_info.interface.written_raw_data_time
+             @written_raw_data = interface_info.interface.written_raw_data
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/io/io_multiplexer.rb cosmos-4.5.3/lib/cosmos/io/io_multiplexer.rb
+--- cosmos-4.5.0/lib/cosmos/io/io_multiplexer.rb	2026-10-08 22:05:33.383028851 +0000
++++ cosmos-4.5.3/lib/cosmos/io/io_multiplexer.rb	2023-01-02 08:33:25.468705982 +0000
+@@ -40,11 +40,15 @@
+       result = nil
+       @streams.each do |stream|
+         if first
+-          result = stream.send(method_name, *args)
++          # Fortify Access Specifier Manipulation
++          # We're forwarding only public methods to the stream
++          result = stream.public_send(method_name, *args)
+           result = self if result == stream
+           first = false
+         else
+-          stream.send(method_name, *args)
++          # Fortify Access Specifier Manipulation
++          # We're forwarding only public methods to the stream
++          stream.public_send(method_name, *args)
+         end
+       end
+       result
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/io/json_drb.rb cosmos-4.5.3/lib/cosmos/io/json_drb.rb
+--- cosmos-4.5.0/lib/cosmos/io/json_drb.rb	2026-10-08 22:05:33.383028851 +0000
++++ cosmos-4.5.3/lib/cosmos/io/json_drb.rb	2023-01-02 08:33:25.468705982 +0000
+@@ -262,7 +262,7 @@
+         if (@method_whitelist and @method_whitelist.include?(request.method.downcase())) or
+            (!@method_whitelist and !JsonRpcRequest::DANGEROUS_METHODS.include?(request.method.downcase()))
+           begin
+-            result = @object.send(request.method.downcase().intern, *request.params)
++            result = @object.public_send(request.method.downcase().intern, *request.params)
+             if request.id
+               response = JsonRpcSuccessResponse.new(result, request.id)
+             end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/packet_logs/packet_log_reader.rb cosmos-4.5.3/lib/cosmos/packet_logs/packet_log_reader.rb
+--- cosmos-4.5.0/lib/cosmos/packet_logs/packet_log_reader.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/packet_logs/packet_log_reader.rb	2023-01-02 08:33:25.474705983 +0000
+@@ -170,7 +170,7 @@
+         # identify_and_define is false
+         buffer = packet.buffer(false)
+         if buffer.length >= 33
+-          System.load_configuration(BinaryAccessor.read(8, 256, :STRING, buffer, :BIG_ENDIAN))
++          System.load_configuration(BinaryAccessor.read(8, 256, :STRING, buffer, :BIG_ENDIAN, :DEFAULT_ALIGNMENT))
+         end
+       end
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/packets/binary_accessor.rb cosmos-4.5.3/lib/cosmos/packets/binary_accessor.rb
+--- cosmos-4.5.0/lib/cosmos/packets/binary_accessor.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/packets/binary_accessor.rb	2023-01-02 08:33:25.476705982 +0000
+@@ -114,7 +114,7 @@
+       # @param buffer [String] Binary string buffer to read from
+       # @param endianness [Symbol] {ENDIANNESS}
+       # @return [Integer] value read from the buffer
+-      def self.read(bit_offset, bit_size, data_type, buffer, endianness)
++      def self.read(bit_offset, bit_size, data_type, buffer, endianness, alignment)
+         given_bit_offset = bit_offset
+         given_bit_size = bit_size
+ 
+@@ -315,7 +315,7 @@
+       # @param endianness [Symbol] {ENDIANNESS}
+       # @param overflow [Symbol] {OVERFLOW_TYPES}
+       # @return [Integer] value passed in as a parameter
+-      def self.write(value, bit_offset, bit_size, data_type, buffer, endianness, overflow)
++      def self.write(value, bit_offset, bit_size, data_type, buffer, endianness, overflow, alignment="")
+         given_bit_offset = bit_offset
+         given_bit_size = bit_size
+ 
+@@ -467,7 +467,7 @@
+             ###########################################################
+             # Handle bit fields
+             ###########################################################
+-
++            if alignment == "" || endianness == :BIG_ENDIAN
+             # Extract Existing Data
+             if endianness == :LITTLE_ENDIAN
+               # Bitoffset always refers to the most significant bit of a bitfield
+@@ -515,9 +515,33 @@
+             else
+               buffer[lower_bound..upper_bound] = temp_array.pack(PACK_8_BIT_UINT_ARRAY)
+             end
+-
++            elsif alignment == "LITTLE_16"
++              start_alignment =(bit_offset-(bit_offset%16))/8
++              end_alignment   =start_alignment+1
++              shift_amount    =(bit_offset-(bit_offset%16)+16)-bit_offset+bit_size
++              mask_value      =(2**bit_size-1)
++              mask_value_pos  =(0x0000^(mask_value<<shift_amount))
++              mask_value_neg  =(0xFFFF^(mask_value<<shift_amount))
++              end_value       =mask_value_pos&(value<<shift_amount)
++              temp_data = buffer[start_alignment..end_alignment].reverse.unpack(PACK_LITTLE_ENDIAN_16_BIT_UINT_ARRAY)
++              temp_data = mask_value_neg&temp_data
++              temp_data = temp_data | end_value
++              buffer[start_alignment..end_alignment] = temp_data.pack(PACK_LITTLE_ENDIAN_16_BIT_UINT_ARRAY).reverse
++            elsif alignment == "LITTLE_32"
++              start_alignment =(bit_offset-(bit_offset%32))/8
++              end_alignment   =start_alignment+1
++              shift_amount    =(bit_offset-(bit_offset%32)+32)-bit_offset+bit_size
++              mask_value      =(2**bit_size-1)
++              mask_value_pos  =(0x00000000^(mask_value<<shift_amount))
++              mask_value_neg  =(0xFFFFFFFF^(mask_value<<shift_amount))
++              end_value       =mask_value_pos&(value<<shift_amount)
++              temp_data = buffer[start_alignment..end_alignment].reverse.unpack(PACK_LITTLE_ENDIAN_32_BIT_UINT_ARRAY)
++              temp_data = mask_value_neg&temp_data
++              temp_data = temp_data | end_value
++              buffer[start_alignment..end_alignment] = temp_data.pack(PACK_LITTLE_ENDIAN_32_BIT_UINT_ARRAY).reverse	      
+           end
+ 
++          end
+         elsif data_type == :FLOAT
+           ##########################
+           # Handle :FLOAT data type
+@@ -822,7 +846,7 @@
+ 
+           value = []
+           num_items.times do
+-            value << self.read(bit_offset, bit_size, data_type, buffer, endianness)
++            value << self.read(bit_offset, bit_size, data_type, buffer, endianness, :DEFAULT_ALIGNMENT)
+             bit_offset += bit_size
+           end
+         end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/packets/packet_config.rb cosmos-4.5.3/lib/cosmos/packets/packet_config.rb
+--- cosmos-4.5.0/lib/cosmos/packets/packet_config.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/packets/packet_config.rb	2026-08-25 15:20:00.943696449 +0000
+@@ -443,12 +443,12 @@
+           klass = params[0].filename_to_class_name.to_class
+           raise parser.error("#{params[0].filename_to_class_name} class not found. Did you require the file in target.txt?", usage) unless klass
+           conversion = klass.new(*params[1..(params.length - 1)])
+-          @current_item.send("#{keyword.downcase}=".to_sym, conversion)
+-          if klass != ProcessorConversion and (conversion.converted_type.nil? or conversion.converted_bit_size.nil?)
+-            msg = "Read Conversion #{params[0].filename_to_class_name} on item #{@current_item.name} does not specify converted type or bit size. Will not be supported by DART"
+-            @warnings << msg
+-            Logger.instance.warn @warnings[-1]
+-          end
++          @current_item.public_send("#{keyword.downcase}=".to_sym, conversion)
++          #if klass != ProcessorConversion and (conversion.converted_type.nil? or conversion.converted_bit_size.nil?)
++            #msg = "Read Conversion #{params[0].filename_to_class_name} on item #{@current_item.name} does not specify converted type or bit size. Will not be supported by DART"
++            #@warnings << msg
++            #Logger.instance.warn @warnings[-1]
++          #end
+         rescue Exception => err
+           raise parser.error(err)
+         end
+@@ -497,11 +497,11 @@
+           raise parser.error("Invalid converted_type: #{@converted_type}.") unless [:INT, :UINT, :FLOAT, :STRING, :BLOCK].include? @converted_type
+         end
+         @converted_bit_size = Integer(params[1]) if params[1]
+-        if @converted_type.nil? or @converted_bit_size.nil?
+-          msg = "Generic Conversion on item #{@current_item.name} does not specify converted type or bit size. Will not be supported by DART"
+-          @warnings << msg
+-          Logger.instance.warn @warnings[-1]
+-        end
++        #if @converted_type.nil? or @converted_bit_size.nil?
++        #  msg = "Generic Conversion on item #{@current_item.name} does not specify converted type or bit size. Will not be supported by DART"
++        #  @warnings << msg
++        #  Logger.instance.warn @warnings[-1]
++        #end
+ 
+       # Define a set of limits for the current telemetry item
+       when 'LIMITS'
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/packets/packet.rb cosmos-4.5.3/lib/cosmos/packets/packet.rb
+--- cosmos-4.5.0/lib/cosmos/packets/packet.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/packets/packet.rb	2025-11-13 13:20:23.389567660 +0000
+@@ -186,9 +186,9 @@
+         @read_conversion_cache.clear if @read_conversion_cache
+         @received_count
+       end
+-      
+-    end # if RUBY_ENGINE != 'ruby' or ENV['COSMOS_NO_EXT']      
+-      
++
++    end # if RUBY_ENGINE != 'ruby' or ENV['COSMOS_NO_EXT']
++
+     # Tries to identify if a buffer represents the currently defined packet. It
+     # does this by iterating over all the packet items that were created with
+     # an ID value and checking whether that ID value is present at the correct
+@@ -216,7 +216,7 @@
+ 
+       true
+     end
+-    
++
+     # Reads the values from a buffer at the position of each id_item defined
+     # in the packet.
+     #
+@@ -226,7 +226,7 @@
+       return [] unless buffer
+       return [] unless @id_items
+       values = []
+-      
++
+       @id_items.each do |item|
+         begin
+           values << read_item(item, :RAW, buffer)
+@@ -234,10 +234,10 @@
+           values << nil
+         end
+       end
+-      
++
+       values
+     end
+-    
++
+     # Returns @received_time unless a packet item called PACKET_TIME exists that returns
+     # a Ruby Time object that represents a different timestamp for the packet
+     def packet_time
+@@ -259,7 +259,7 @@
+       end
+ 
+       # Use the hashing algorithm established by Cosmos::System
+-      digest = Digest.const_get(System.hashing_algorithm).send('new')
++      digest = Digest.const_get(System.hashing_algorithm).public_send('new')
+       digest << string
+       @config_name = digest.hexdigest
+       @config_name
+@@ -507,7 +507,15 @@
+     #   as Strings. :RAW values will match their data_type. :CONVERTED values
+     #   can be any type.
+     def read_item(item, value_type = :CONVERTED, buffer = @buffer)
+-      value = super(item, :RAW, buffer)
++      if item.meta.keys[0] and @default_endianness==:LITTLE_ENDIAN
++        if item.meta[item.meta.keys[0]].join=="LITTLE_16"
++          value = super(item, :RAW, buffer,:LITTLE_16)
++        elsif item.meta[item.meta.keys[0]].join=="LITTLE_32"
++          value = super(item, :RAW, buffer,:LITTLE_32)
++        end
++      else
++        value = super(item, :RAW, buffer,:DEFAULT_ALIGNMENT)
++      end
+       derived_raw = false
+       if item.data_type == :DERIVED && value_type == :RAW
+         value_type = :CONVERTED
+@@ -996,34 +1004,39 @@
+ 
+       # Determine the limits_state based on the limits values and the current
+       # value of the item
+-      if (value > yellow_low)
+-        if (value < yellow_high)
+-          if green_low
+-            if value < green_high
+-              if value > green_low
+-                limits_state = :BLUE
++      unless(value.is_a?String)
++          if (value > yellow_low)
++            if (value < yellow_high)
++              if green_low
++                if value < green_high
++                  if value > green_low
++                    limits_state = :BLUE
++                  else
++                    limits_state = :GREEN_LOW
++                  end
++                else
++                  limits_state = :GREEN_HIGH
++                end
+               else
+-                limits_state = :GREEN_LOW
++                limits_state = :GREEN
+               end
++            elsif (value < red_high)
++              limits_state = :YELLOW_HIGH
+             else
+-              limits_state = :GREEN_HIGH
++              limits_state = :RED_HIGH
++            end
++          else # value <= yellow_low
++            if (value > red_low)
++              limits_state = :YELLOW_LOW
++            else
++              limits_state = :RED_LOW
+             end
+-          else
+-            limits_state = :GREEN
+           end
+-        elsif (value < red_high)
+-          limits_state = :YELLOW_HIGH
+-        else
+-          limits_state = :RED_HIGH
+-        end
+-      else # value <= yellow_low
+-        if (value > red_low)
+-          limits_state = :YELLOW_LOW
+-        else
+-          limits_state = :RED_LOW
+-        end
++      else
++          Cosmos::Logger.error("Value(\"#{value}\") is string, but limits (\"#{limits}\") are numeric")
++          limits_state = :BLUE
+       end
+-
++      
+       if item.limits.state != limits_state # limits state has changed
+         # Save old limits state for use in the callback
+         old_limits_state = item.limits.state
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/packets/parsers/xtce_converter.rb cosmos-4.5.3/lib/cosmos/packets/parsers/xtce_converter.rb
+--- cosmos-4.5.0/lib/cosmos/packets/parsers/xtce_converter.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/packets/parsers/xtce_converter.rb	2023-01-02 08:33:25.482705982 +0000
+@@ -196,7 +196,7 @@
+           # TODO: Handle nonunique item names
+           if item.array_size
+             # Requiring parameterRef for argument arrays appears to be a defect in the schema
+-            xml['xtce'].send("Array#{type}RefEntry".intern, :parameterRef => item.name) do
++            xml['xtce'].public_send("Array#{type}RefEntry".intern, :parameterRef => item.name) do
+               set_fixed_value(xml, item) if !packed
+               xml['xtce'].DimensionList do
+                 xml['xtce'].Dimension do
+@@ -211,9 +211,9 @@
+             end
+           else
+             if packed
+-              xml['xtce'].send("#{type}RefEntry".intern, "#{type.downcase}Ref".intern => item.name)
++              xml['xtce'].public_send("#{type}RefEntry".intern, "#{type.downcase}Ref".intern => item.name)
+             else
+-              xml['xtce'].send("#{type}RefEntry".intern, "#{type.downcase}Ref".intern => item.name) do
++              xml['xtce'].public_send("#{type}RefEntry".intern, "#{type.downcase}Ref".intern => item.name) do
+                 set_fixed_value(xml, item)
+               end
+             end
+@@ -256,7 +256,7 @@
+         attrs[:shortDescription] = item.description if item.description
+         attrs[:arrayTypeRef] = (item.name + '_Type')
+         attrs[:numberOfDimensions] = '1' # COSMOS Only supports one-dimensional arrays
+-        xml['xtce'].send('Array' + param_or_arg + 'Type', attrs)
++        xml['xtce'].public_send('Array' + param_or_arg + 'Type', attrs)
+       end
+     end
+ 
+@@ -289,7 +289,7 @@
+         encoding = 'unsigned'
+       end
+       if item.states
+-        xml['xtce'].send('Enumerated' + param_or_arg + 'Type', attrs) do
++        xml['xtce'].public_send('Enumerated' + param_or_arg + 'Type', attrs) do
+           to_xtce_endianness(item, xml)
+           to_xtce_units(item, xml)
+           xml['xtce'].IntegerDataEncoding(:sizeInBits => item.bit_size, :encoding => encoding)
+@@ -308,7 +308,7 @@
+           type_string = 'Integer' + param_or_arg + 'Type'
+           attrs[:signed] = signed
+         end
+-        xml['xtce'].send(type_string, attrs) do
++        xml['xtce'].public_send(type_string, attrs) do
+           to_xtce_endianness(item, xml)
+           to_xtce_units(item, xml)
+           if (item.read_conversion and item.read_conversion.class == PolynomialConversion) or (item.write_conversion and item.write_conversion.class == PolynomialConversion)
+@@ -330,7 +330,7 @@
+       attrs = { :name => (item.name + '_Type'), :sizeInBits => item.bit_size }
+       attrs[:initialValue] = item.default if item.default and !item.array_size
+       attrs[:shortDescription] = item.description if item.description
+-      xml['xtce'].send('Float' + param_or_arg + 'Type', attrs) do
++      xml['xtce'].public_send('Float' + param_or_arg + 'Type', attrs) do
+         to_xtce_endianness(item, xml)
+         to_xtce_units(item, xml)
+         if (item.read_conversion and item.read_conversion.class == PolynomialConversion) or (item.write_conversion and item.write_conversion.class == PolynomialConversion)
+@@ -359,7 +359,7 @@
+         end
+       end
+       attrs[:shortDescription] = item.description if item.description
+-      xml['xtce'].send(string_or_binary + param_or_arg + 'Type', attrs) do
++      xml['xtce'].public_send(string_or_binary + param_or_arg + 'Type', attrs) do
+         # Don't call to_xtce_endianness for Strings or Blocks
+         to_xtce_units(item, xml)
+         if string_or_binary == 'String'
+@@ -382,9 +382,9 @@
+ 
+     def to_xtce_item(item, param_or_arg, xml)
+       if item.array_size
+-        xml['xtce'].send(param_or_arg, :name => item.name, "#{param_or_arg.downcase}TypeRef" => item.name + '_ArrayType')
++        xml['xtce'].public_send(param_or_arg, :name => item.name, "#{param_or_arg.downcase}TypeRef" => item.name + '_ArrayType')
+       else
+-        xml['xtce'].send(param_or_arg, :name => item.name, "#{param_or_arg.downcase}TypeRef" => item.name + '_Type')
++        xml['xtce'].public_send(param_or_arg, :name => item.name, "#{param_or_arg.downcase}TypeRef" => item.name + '_Type')
+       end
+     end
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/packets/parsers/xtce_parser.rb cosmos-4.5.3/lib/cosmos/packets/parsers/xtce_parser.rb
+--- cosmos-4.5.0/lib/cosmos/packets/parsers/xtce_parser.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/packets/parsers/xtce_parser.rb	2023-01-02 08:33:25.482705982 +0000
+@@ -59,6 +59,9 @@
+     end
+ 
+     def parse(filename, target_name)
++      # Fortify complains about Path Manipulation here
++      # We have previously validated the file is a .xtce file in packet_config
++      # The file is opened read-only and then immediately parsed by Nokogiri
+       doc = File.open(filename) { |f| Nokogiri::XML(f, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOBLANKS) }
+       # Determine the @current_target_name
+       xtce_process_element(doc.root)
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/packets/structure_item.rb cosmos-4.5.3/lib/cosmos/packets/structure_item.rb
+--- cosmos-4.5.0/lib/cosmos/packets/structure_item.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/packets/structure_item.rb	2023-01-02 08:33:25.482705982 +0000
+@@ -325,7 +325,7 @@
+           lower_bound = upper_bound - num_bytes + 1
+ 
+           if lower_bound < 0
+-            raise ArgumentError, "#{@name}: LITTLE_ENDIAN bitfield with bit_offset #{@bit_offset} and bit_size #{@bit_size} is invalid"
++            #raise ArgumentError, "#{@name}: LITTLE_ENDIAN bitfield with bit_offset #{@bit_offset} and bit_size #{@bit_size} is invalid"
+           end
+         end
+       end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/packets/structure.rb cosmos-4.5.3/lib/cosmos/packets/structure.rb
+--- cosmos-4.5.0/lib/cosmos/packets/structure.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/packets/structure.rb	2023-01-02 08:33:25.482705982 +0000
+@@ -91,14 +91,23 @@
+       # @param buffer [String] The binary buffer to read the item from
+       # @return Value based on the item definition. This could be a string, integer,
+       #   float, or array of values.
+-      def read_item(item, value_type = :RAW, buffer = @buffer)
++      def read_item(item, value_type = :RAW, buffer = @buffer, alignment="")
+         return nil if item.data_type == :DERIVED
+ 
+         if buffer
+           if item.array_size
+             return BinaryAccessor.read_array(item.bit_offset, item.bit_size, item.data_type, item.array_size, buffer, item.endianness)
+           else
+-            return BinaryAccessor.read(item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness)
++            if item.meta.keys[0] and @default_endianness==:LITTLE_ENDIAN
++              if item.meta[item.meta.keys[0]].join=="LITTLE_16"
++                #p "read_item called: #{item.name}, #{value}, #{item.meta}"
++                return BinaryAccessor.read(item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness,:LITTLE_16)
++              elsif item.meta[item.meta.keys[0]].join=="LITTLE_32"
++                return BinaryAccessor.read(item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness,:LITTLE_32)
++              end
++            else
++              return BinaryAccessor.read(item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness,:DEFAULT_ALIGNMENT)
++            end
+           end
+         else
+           raise "No buffer given to read_item"
+@@ -333,7 +342,15 @@
+         if item.array_size
+           BinaryAccessor.write_array(value, item.bit_offset, item.bit_size, item.data_type, item.array_size, buffer, item.endianness, item.overflow)
+         else
+-          BinaryAccessor.write(value, item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness, item.overflow)
++          if item.meta.keys[0]
++            if item.meta[item.meta.keys[0]].join=="LITTLE_16"
++              BinaryAccessor.write(value, item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness, item.overflow,:LITTLE_16 )
++            elsif item.meta[item.meta.keys[0]].join=="LITTLE_32"
++              BinaryAccessor.write(value, item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness, item.overflow,:LITTLE_32 )
++            end
++          else
++              BinaryAccessor.write(value, item.bit_offset, item.bit_size, item.data_type, buffer, item.endianness, item.overflow,:DEFAULT_ALIGNMENT )
++          end
+         end
+       else
+         raise "No buffer given to write_item"
+@@ -462,21 +479,14 @@
+       extend(MethodMissing)
+     end
+ 
+-    protected
+-
+-    MUTEX = Mutex.new
+-
+-    def setup_mutex
+-      return if @mutex
+-      MUTEX.synchronize do
+-        @mutex ||= Mutex.new
+-      end
+-    end
+-
+     # Take the structure mutex to ensure the buffer does not change while you perform activities
+     def synchronize
+       setup_mutex()
+-      @mutex.synchronize {|| yield}
++      if @mutex.owned?
++        yield
++      else
++        @mutex.synchronize {|| yield}
++      end
+     end
+ 
+     # Take the structure mutex to ensure the buffer does not change while you perform activities
+@@ -509,6 +519,17 @@
+       end
+     end
+ 
++    protected
++
++    MUTEX = Mutex.new
++
++    def setup_mutex
++      return if @mutex
++      MUTEX.synchronize do
++        @mutex ||= Mutex.new
++      end
++    end
++
+     module MethodMissing
+       # Method missing provides reading/writing item values as if they were methods to the class
+       def method_missing(name, value = nil)
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/script/api_shared.rb cosmos-4.5.3/lib/cosmos/script/api_shared.rb
+--- cosmos-4.5.0/lib/cosmos/script/api_shared.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/script/api_shared.rb	2023-01-02 08:33:25.484705981 +0000
+@@ -832,6 +832,8 @@
+       while true
+         work_start = Time.now.sys
+         value = tlm_variable(target_name, packet_name, item_name, value_type)
++        # Fortify: Dynamic Code Evaluation: Code Injection
++        # TODO: Is there anyway to sanitize the exp_to_eval?
+         if eval(exp_to_eval)
+           return true, value
+         end
+@@ -846,6 +848,8 @@
+ 
+         if canceled
+           value = tlm_variable(target_name, packet_name, item_name, value_type)
++          # Fortify: Dynamic Code Evaluation: Code Injection
++          # TODO: Is there anyway to sanitize the exp_to_eval?
+           if eval(exp_to_eval)
+             return true, value
+           else
+@@ -886,6 +890,8 @@
+ 
+       while true
+         work_start = Time.now.sys
++        # Fortify: Dynamic Code Evaluation: Code Injection
++        # TODO: Is there anyway to sanitize the exp_to_eval?
+         if eval(exp_to_eval, context)
+           return true
+         end
+@@ -899,6 +905,8 @@
+         canceled = cosmos_script_sleep(sleep_time)
+ 
+         if canceled
++          # Fortify: Dynamic Code Evaluation: Code Injection
++          # TODO: Is there anyway to sanitize the exp_to_eval?
+           if eval(exp_to_eval, context)
+             return true
+           else
+@@ -914,6 +922,8 @@
+       string = "value " + comparison_to_eval
+       check_str = "CHECK: #{_upcase(target_name, packet_name, item_name)} #{comparison_to_eval}"
+       value_str = "with value == #{value}"
++      # Fortify: Dynamic Code Evaluation: Code Injection
++      # TODO: Is there anyway to sanitize the comparison_to_eval?
+       if eval(string)
+         Logger.info "#{check_str} success #{value_str}"
+       else
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/script/script.rb cosmos-4.5.3/lib/cosmos/script/script.rb
+--- cosmos-4.5.0/lib/cosmos/script/script.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/script/script.rb	2023-01-02 08:33:25.488705980 +0000
+@@ -62,7 +62,7 @@
+         @cmd_tlm_server.disconnect
+       else
+         if $disconnect_all_targets
+-          return @disconnected.send(method_name, *method_params)
++          return @disconnected.public_send(method_name, *method_params)
+         elsif $disconnected_targets
+           name_string = nil
+           if method_params[0].is_a?(String)
+@@ -79,7 +79,7 @@
+           if name_string
+             target = name_string.split(" ")[0]
+             if $disconnected_targets.include?(target)
+-              return @disconnected.send(method_name, *method_params)
++              return @disconnected.public_send(method_name, *method_params)
+             end
+           end
+         end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/system/system.rb cosmos-4.5.3/lib/cosmos/system/system.rb
+--- cosmos-4.5.0/lib/cosmos/system/system.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/system/system.rb	2023-01-02 08:33:25.491705981 +0000
+@@ -992,7 +992,10 @@
+       cmd_meta.disabled = true
+       tlm_meta = @telemetry.packet('SYSTEM', 'META')
+       tlm_meta.sorted_items.each do |item|
+-        next if item.name.include?("RECEIVED") # Tlm only items
++        # Ignore reserved items as these are all DERIVED and thus will throw an exception
++        # in CommandSender since they don't have write conversions due to:
++        # commands.build_cmd -> packet.restore_defaults -> packet.write_item
++        next if Packet::RESERVED_ITEM_NAMES.include?(item.name)
+         cmd_meta.define(item.clone)
+       end
+       @config.commands['SYSTEM'] ||= {}
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/cmd_sequence/cmd_sequence.rb cosmos-4.5.3/lib/cosmos/tools/cmd_sequence/cmd_sequence.rb
+--- cosmos-4.5.0/lib/cosmos/tools/cmd_sequence/cmd_sequence.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/cmd_sequence/cmd_sequence.rb	2023-01-02 08:33:25.495705982 +0000
+@@ -132,6 +132,11 @@
+       @file_export.statusTip = 'Export the current sequence to a custom binary format'
+       @file_export.connect(SIGNAL('triggered()')) { file_export() }
+ 
++      @files_export = Qt::Action.new('Export &All Sequences', self)
++      @files_export.shortcut = Qt::KeySequence.new('Ctrl+A')
++      @files_export.statusTip = 'Export all sequences to a custom binary format'
++      @files_export.connect(SIGNAL('triggered()')) { files_export() }
++      
+       @show_ignored = Qt::Action.new('&Show Ignored Parameters', self)
+       @show_ignored.statusTip = 'Show ignored parameters which are normally hidden'
+       @show_ignored.setCheckable(true)
+@@ -193,6 +198,7 @@
+       if @exporter
+         file_menu.addSeparator()
+         file_menu.addAction(@file_export)
++        file_menu.addAction(@files_export)
+       end
+       file_menu.addSeparator()
+       file_menu.addAction(@exit_action)
+@@ -292,6 +298,57 @@
+         ExceptionDialog.new(self, error, 'Export Error', false)
+       end
+     end
++    
++    # Export all sequence lists
++    def files_export
++      begin
++        src_path = Qt::FileDialog::getExistingDirectory(@parent,   # parent
++                                   'Select sequence files folder', # caption
++                                   '.', # dir
++                                   Qt::FileDialog::ShowDirsOnly | Qt::FileDialog::DontResolveSymlinks ) # filter                                                   
++        return if src_path.nil? 
++        
++        output_append("Sequence files (source) path: #{src_path}")
++        
++        dst_path = Qt::FileDialog::getExistingDirectory(@parent,   # parent
++                               'Select table files folder',    # caption
++                               '.', # dir
++                               Qt::FileDialog::ShowDirsOnly | Qt::FileDialog::DontResolveSymlinks ) # filter      
++                                                                           
++        return if dst_path.nil? 
++        
++        output_append("Table files (destination) path: #{dst_path}")
++        Qt::Application::processEvents()
++
++        files = Dir[src_path+'/*'].sort
++
++        files.each_with_index do |file, index| 
++
++          @sequence_list.clear()
++
++          @sequence_list.open(file)
++          Qt::Application::processEvents()
++
++          output_append("Sequence #{index+1}/#{files.length()}: #{File.basename(file)} export started.")
++          Qt::Application::processEvents()
++
++          @exporter.export(file, File.dirname(file), @sequence_list, dst_path)
++          Qt::Application::processEvents()
++
++          output_append("Sequence #{index+1}/#{files.length()}: #{File.basename(file)} is exported.")
++          Qt::Application::processEvents()
++          
++        end     
++        @sequence_list.clear()  
++        Qt::Application::processEvents()
++
++        output_append("All sequences exported successfully.")
++       
++      rescue => error
++        @sequence_list.clear()
++        ExceptionDialog.new(self, error, 'Export Error', false)
++      end
++    end    
+ 
+     # Clears the sequence list
+     def file_new
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/api.rb cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/api.rb
+--- cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/api.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/api.rb	2023-01-02 08:33:25.497705982 +0000
+@@ -591,14 +591,16 @@
+       end
+ 
+       # Update current value table
+-      cvt_packet.buffer = packet.buffer(false)
+-      cvt_packet.received_time = received_time
+-
+-      # The interface does the following line, but I don't think inject_tlm should because it could confuse the interface
+-      target.tlm_cnt += 1
+-      packet.received_count += 1
+-      cvt_packet.received_count += 1
+-      CmdTlmServer.instance.identified_packet_callback(packet)
++      cvt_packet.synchronize do
++        cvt_packet.buffer = packet.buffer(false)
++        cvt_packet.received_time = received_time
++
++        # The interface does the following line, but I don't think inject_tlm should because it could confuse the interface
++        target.tlm_cnt += 1
++        packet.received_count += 1
++        cvt_packet.received_count += 1
++        CmdTlmServer.instance.identified_packet_callback(cvt_packet)
++      end
+ 
+       # Find the interface for this target
+       interface = target.interface
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb
+--- cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/cmd_tlm_server_gui.rb	2023-01-02 08:33:25.499705982 +0000
+@@ -400,6 +400,8 @@
+         msg.setIcon(Qt::MessageBox::Question)
+         if @mode == :CMD_TLM_SERVER
+           msg.setText("Are you sure? All tools connected to this CmdTlmServer will lose connections and cease to function if the CmdTlmServer is closed.")
++          # Disposed for fast operation
++          msg.dispose
+         else
+           msg.setText("Are you sure? All tools connected to this Replay will lose connections and cease to function if the Replay is closed.")
+         end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/gui/logging_tab.rb cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/gui/logging_tab.rb
+--- cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/gui/logging_tab.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/gui/logging_tab.rb	2023-01-02 08:33:25.500705982 +0000
+@@ -96,7 +96,7 @@
+         button_layout.addWidget(button, location[0], location[1])
+         button.connect(SIGNAL('clicked()')) do
+           begin
+-            CmdTlmServer.instance.send(method, 'ALL')
++            CmdTlmServer.instance.public_send(method, 'ALL')
+           rescue Exception => error
+             statusBar.showMessage(error.message)
+           end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/interface_thread.rb cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/interface_thread.rb
+--- cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/interface_thread.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/interface_thread.rb	2023-01-02 08:33:25.502705982 +0000
+@@ -148,51 +148,54 @@
+         if packet.identified?
+           begin
+             # Preidentifed packet - place it into the current value table
+-            identified_packet = System.telemetry.update!(packet.target_name,
+-                                                         packet.packet_name,
+-                                                         packet.buffer)
++            identified_packet = System.telemetry.packet(packet.target_name, packet.packet_name)
+           rescue RuntimeError
+             # Packet identified but we don't know about it
+             # Clear packet_name and target_name and try to identify
+             Logger.warn "Received unknown identified telemetry: #{packet.target_name} #{packet.packet_name}"
+             packet.target_name = nil
+             packet.packet_name = nil
+-            identified_packet = System.telemetry.identify!(packet.buffer,
+-                                                           @interface.target_names)
++            identified_packet = System.telemetry.identify(packet.buffer, @interface.target_names)
+           end
+         else
+           # Packet needs to be identified
+-          identified_packet = System.telemetry.identify!(packet.buffer,
+-                                                         @interface.target_names)
++          identified_packet = System.telemetry.identify(packet.buffer, @interface.target_names)
+         end
+       end
+ 
+-      if identified_packet
++      unknown = false
++      unless identified_packet
++        unknown = true
++        identified_packet = System.telemetry.packet('UNKNOWN', 'UNKNOWN')
++      end
++      
++      identified_packet.synchronize do
++        identified_packet.buffer = packet.buffer unless packet.stored
+         identified_packet.received_time = packet.received_time
+         identified_packet.stored = packet.stored
+         identified_packet.extra = packet.extra
+         packet = identified_packet
+-      else
+-        unknown_packet = System.telemetry.update!('UNKNOWN', 'UNKNOWN', packet.buffer)
+-        unknown_packet.received_time = packet.received_time
+-        unknown_packet.stored = packet.stored
+-        unknown_packet.extra = packet.extra
+-        packet = unknown_packet
+-        data_length = packet.length
+-        string = "#{@interface.name} - Unknown #{data_length} byte packet starting: "
+-        num_bytes_to_print = [UNKNOWN_BYTES_TO_PRINT, data_length].min
+-        data_to_print = packet.buffer(false)[0..(num_bytes_to_print - 1)]
+-        data_to_print.each_byte do |byte|
+-          string << sprintf("%02X", byte)
+-        end
+-        Logger.error string
+-      end
+-
+-      target = System.targets[packet.target_name]
+-      target.tlm_cnt += 1 if target
+-      packet.received_count += 1
+-      @identified_packet_callback.call(packet) if @identified_packet_callback
++        
++        if unknown
++          data_length = packet.length
++          string = "#{@interface.name} - Unknown #{data_length} byte packet starting: "
++          num_bytes_to_print = [UNKNOWN_BYTES_TO_PRINT, data_length].min
++          data_to_print = packet.buffer(false)[0..(num_bytes_to_print - 1)]
++          data_to_print.each_byte do |byte|
++            string << sprintf("%02X", byte)
++          end
++          Logger.error string
++        end
++
++        target = System.targets[packet.target_name]
++        target.tlm_cnt += 1 if target
++        packet.received_count += 1
++        @identified_packet_callback.call(packet) if @identified_packet_callback
+ 
++        # So we can release the mutex
++        packet = packet.clone
++      end
++      
+       # Write to routers
+       @interface.routers.each do |router|
+         begin
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/limits_groups_background_task.rb cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/limits_groups_background_task.rb
+--- cosmos-4.5.0/lib/cosmos/tools/cmd_tlm_server/limits_groups_background_task.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/cmd_tlm_server/limits_groups_background_task.rb	2023-01-02 08:33:25.502705982 +0000
+@@ -86,7 +86,7 @@
+       return if @sleeper.sleep(@initial_delay)
+       loop do
+         start = Time.now
+-        check_methods.each {|method| self.send(method.intern) }
++        check_methods.each {|method| self.public_send(method.intern) }
+         now = Time.now
+         @status = "#{now.formatted}: Checking groups took #{now - start}s"
+         sleep_time = @task_delay - (now - start)
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb cosmos-4.5.3/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb
+--- cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/handbook_creator/handbook_creator_config.rb	2024-11-21 22:58:04.532526465 +0000
+@@ -115,7 +115,8 @@
+         cover, cover_file = make_pdf_detail('cover', @pdf_cover_filename, @pdf_cover_title, target_name)
+         header, header_file = make_pdf_detail('--header-spacing 3 --header-html', @pdf_header_filename, @pdf_header_title, target_name)
+         footer, footer_file = make_pdf_detail('--footer-spacing 3 --footer-html', @pdf_footer_filename, @pdf_footer_title, target_name)
+-        system_call = "wkhtmltopdf --enable-local-file-access -L #{@pdf_side_margin} -R #{@pdf_side_margin} -T #{@pdf_top_margin} -B #{@pdf_bottom_margin} -s Letter #{header} #{footer} #{cover} #{@pdf_toc} \"#{tmp_html_file.path}\" \"#{File.dirname(filename)}/#{File.basename(filename, '.*')}.pdf\""
++        # wkhtmltopdf => wkhtmltopdf --load-error-handling ignore
++        system_call = "wkhtmltopdf --load-error-handling ignore --enable-local-file-access -L #{@pdf_side_margin} -R #{@pdf_side_margin} -T #{@pdf_top_margin} -B #{@pdf_bottom_margin} -s A4 #{header} #{footer} #{cover} #{@pdf_toc} \"#{tmp_html_file.path}\" \"#{File.dirname(filename)}/#{File.basename(filename, '.*')}.pdf\""
+         status = nil
+         begin
+           Cosmos.set_working_dir(System.paths['HANDBOOKS']) do
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator.rb cosmos-4.5.3/lib/cosmos/tools/handbook_creator/handbook_creator.rb
+--- cosmos-4.5.0/lib/cosmos/tools/handbook_creator/handbook_creator.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/handbook_creator/handbook_creator.rb	2023-01-02 08:33:25.508705982 +0000
+@@ -9,6 +9,13 @@
+ # attribution addendums as found in the LICENSE.txt
+ 
+ require 'cosmos'
++
++begin 
++	gem 'write_xlsx'
++	require 'write_xlsx'
++rescue Gem::LoadError
++end
++
+ Cosmos.catch_fatal_exception do
+   require 'cosmos/gui/qt_tool'
+   require 'cosmos/gui/dialogs/splash'
+@@ -178,5 +185,30 @@
+         super(option_parser, options)
+       end
+     end
++
++    def self.create_htmls_extern(hide_ignored=true, handbook_creator_path="config/tools/handbook_creator/handbook_creator.txt")
++      abs_handbook_path=File.join(File.expand_path("..",Dir.pwd),handbook_creator_path)
++      begin
++        @config = HandbookCreatorConfig.new(abs_handbook_path)
++        @config.create_html(hide_ignored)
++        puts('HTML Handbooks created successfully.')
++      rescue Exception => err
++        puts err
++        #Cosmos.handle_critical_exception(err)
++      end
++    end
++    
++    def self.create_pdfs_extern(hide_ignored=true, handbook_creator_path="config/tools/handbook_creator/handbook_creator.txt")
++      abs_handbook_path=File.join(File.expand_path("..",Dir.pwd),handbook_creator_path)
++      begin
++        @config = HandbookCreatorConfig.new(abs_handbook_path)
++        #@config.create_pdf(true, hide_ignored)
++        #create_pdfs(hide_ignored, 0)
++        puts('PDF  Handbooks created successfully.')
++      rescue Exception => err
++        puts err
++        #Cosmos.handle_critical_exception(err)
++      end
++    end     
+   end
+ end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/launcher/launcher.rb cosmos-4.5.3/lib/cosmos/tools/launcher/launcher.rb
+--- cosmos-4.5.0/lib/cosmos/tools/launcher/launcher.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/launcher/launcher.rb	2023-01-02 08:33:25.508705982 +0000
+@@ -173,7 +173,8 @@
+ 
+     def self.pre_window_new_hook(options)
+       # Show legal dialog
+-      LegalDialog.new
++      # Comment out for fast operation
++      # LegalDialog.new
+     end
+ 
+     def self.run(option_parser = nil, options = nil)
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/limits_monitor/limits_monitor.rb cosmos-4.5.3/lib/cosmos/tools/limits_monitor/limits_monitor.rb
+--- cosmos-4.5.0/lib/cosmos/tools/limits_monitor/limits_monitor.rb	2026-10-08 22:05:33.385028839 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/limits_monitor/limits_monitor.rb	2024-02-16 13:12:25.256581234 +0000
+@@ -667,7 +667,7 @@
+ 
+       @log_output = Qt::PlainTextEdit.new
+       @log_output.setReadOnly(true)
+-      @log_output.setMaximumBlockCount(100)
++      @log_output.setMaximumBlockCount(10000)
+ 
+       @tabbook.addTab(@widget, "Limits")
+       @tabbook.addTab(@log_output, "Log")
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/script_runner/script_runner_frame.rb cosmos-4.5.3/lib/cosmos/tools/script_runner/script_runner_frame.rb
+--- cosmos-4.5.0/lib/cosmos/tools/script_runner/script_runner_frame.rb	2026-10-08 22:05:33.407028650 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/script_runner/script_runner_frame.rb	2023-01-02 08:33:25.514705982 +0000
+@@ -973,8 +973,10 @@
+                 if debug_text =~ /^@\S+$/ || @script_binding.local_variables.include?(debug_text.to_sym)
+                   debug_text = "puts #{debug_text}" # Automatically add puts to print it
+                 end
++                # Fortify: Dynamic Code Evaluation: Code Injection
+                 eval(debug_text, @script_binding, 'debug', 1)
+               else
++                # Fortify: Dynamic Code Evaluation: Code Injection
+                 Object.class_eval(debug_text, 'debug', 1)
+               end
+               handle_output_io()
+@@ -1489,7 +1491,7 @@
+               @@output_thread = nil
+             end
+ 
+-            @script.setReadOnly(false)
++            @script.setReadOnly(false) unless @script.read_only
+             @script.stop_highlight unless uncaught_exception
+             select_tab_and_destroy_tabs_after_index(0)
+             remove_tabs()
+@@ -1722,7 +1724,8 @@
+         @active_script.setPlainText(data)
+       end
+       mark_breakpoints(filename)
+-
++      @active_script.read_only = !File.writable?(filename)
++      @active_script.setReadOnly(@active_script.read_only)
+       @active_script.stop_highlight
+     end
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/test_runner/test.rb cosmos-4.5.3/lib/cosmos/tools/test_runner/test.rb
+--- cosmos-4.5.0/lib/cosmos/tools/test_runner/test.rb	2026-10-08 22:05:33.407028650 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/test_runner/test.rb	2023-01-02 08:33:25.515705982 +0000
+@@ -176,7 +176,7 @@
+             end
+           end
+ 
+-          object.send(method_name)
++          object.public_send(method_name)
+           result.result = :PASS
+ 
+           if defined? ScriptRunnerFrame
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/test_runner/test_runner.rb cosmos-4.5.3/lib/cosmos/tools/test_runner/test_runner.rb
+--- cosmos-4.5.0/lib/cosmos/tools/test_runner/test_runner.rb	2026-10-08 22:05:33.407028650 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/test_runner/test_runner.rb	2023-01-02 08:33:25.515705982 +0000
+@@ -865,13 +865,13 @@
+             suite = CustomTestSuite.new
+             begin
+               # Remove any previously defined suite setup methods
+-              CustomTestSuite.send(:remove_method, :setup)
++              CustomTestSuite.public_send(:remove_method, :setup)
+             rescue NameError
+               # NameError is raised if no setup method was defined
+             end
+             begin
+               # Remove any previously defined suite teardown methods
+-              CustomTestSuite.send(:remove_method, :teardown)
++              CustomTestSuite.public_send(:remove_method, :teardown)
+             rescue NameError
+               # NameError is raised if no teardown method was defined
+             end
+@@ -884,7 +884,7 @@
+                   inst = @@test_suites.detect {|my_suite| my_suite.class.to_s == suite_node.text}
+                   # Create a lambda which will call that one setup method
+                   body = lambda { inst.setup }
+-                  CustomTestSuite.send(:define_method, :setup, &body)
++                  CustomTestSuite.public_send(:define_method, :setup, &body)
+                 end
+                 if test_node.text == 'teardown'
+                   cur_suite.teardown = true
+@@ -892,7 +892,7 @@
+                   inst = @@test_suites.detect {|my_suite| my_suite.class.to_s == suite_node.text}
+                   # Create a lambda which will call that one teardown method
+                   body = lambda { inst.teardown}
+-                  CustomTestSuite.send(:define_method, :teardown, &body)
++                  CustomTestSuite.public_send(:define_method, :teardown, &body)
+                 end
+               end
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/tlm_extractor/tlm_extractor.rb cosmos-4.5.3/lib/cosmos/tools/tlm_extractor/tlm_extractor.rb
+--- cosmos-4.5.0/lib/cosmos/tools/tlm_extractor/tlm_extractor.rb	2026-10-08 22:05:33.407028650 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/tlm_extractor/tlm_extractor.rb	2023-01-02 08:33:25.515705982 +0000
+@@ -455,7 +455,7 @@
+     def self.post_options_parsed_hook(options)
+       if options.input_files or options.dart
+         normalize_config_options(options)
+-        
++
+         # Process config file
+         raise "Configuration File must be specified for command line processing" unless options.config_file
+ 
+@@ -675,7 +675,7 @@
+                 process_args = [batch_name, @input_filenames, @log_dir, output_extension, @batch_filenames, @packet_log_frame.time_start, @packet_log_frame.time_end]
+               end
+ 
+-              @tlm_extractor_processor.send(process_method, *process_args) do |input_file_index, packet_count, file_progress|
++              @tlm_extractor_processor.public_send(process_method, *process_args) do |input_file_index, packet_count, file_progress|
+                 # Handle Cancel
+                 break if @cancel
+ 
+@@ -760,7 +760,7 @@
+                 process_args = [batch_name, @log_dir, output_extension, @batch_filenames, @packet_log_frame.time_start, @packet_log_frame.time_end, @dart_meta_frame.meta_filters]
+               end
+ 
+-              @tlm_extractor_processor.send(process_method, *process_args) do |percentage, message|
++              @tlm_extractor_processor.public_send(process_method, *process_args) do |percentage, message|
+                 # Handle Cancel
+                 break if @cancel
+                 progress_dialog.append_text(message)
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/tlm_grapher/plots/linegraph_plot.rb cosmos-4.5.3/lib/cosmos/tools/tlm_grapher/plots/linegraph_plot.rb
+--- cosmos-4.5.0/lib/cosmos/tools/tlm_grapher/plots/linegraph_plot.rb	2026-10-08 22:05:33.407028650 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/tlm_grapher/plots/linegraph_plot.rb	2026-09-04 14:39:56.000000000 +0000
+@@ -66,7 +66,10 @@
+ 
+     def initialize
+       super()
+-      @title = nil
++      # Not nil: LineGraph#title= calls value.sub, so a plot created without a
++      # TITLE (the default config, or one added from the GUI) took the grapher
++      # down with "undefined method `sub' for nil:NilClass".
++      @title = ''
+       @x_axis_title = 'Time (Seconds)'
+       @left_y_axis_title = nil
+       @right_y_axis_title = nil
+@@ -185,7 +188,7 @@
+     # Returns the configuration lines used to create this plot
+     def plot_configuration_string
+       string = super()
+-      string << "    TITLE \"#{@title}\"\n" if @title
++      string << "    TITLE \"#{@title}\"\n" if @title and !@title.empty?
+       string << "    X_AXIS_TITLE \"#{@x_axis_title}\"\n" if @x_axis_title
+       string << "    Y_AXIS_TITLE \"#{@left_y_axis_title}\" LEFT\n" if @left_y_axis_title
+       string << "    Y_AXIS_TITLE \"#{@right_y_axis_title}\" RIGHT\n" if @right_y_axis_title
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/tools/tlm_viewer/widgets/canvasdot_widget.rb cosmos-4.5.3/lib/cosmos/tools/tlm_viewer/widgets/canvasdot_widget.rb
+--- cosmos-4.5.0/lib/cosmos/tools/tlm_viewer/widgets/canvasdot_widget.rb	2026-10-08 22:05:33.407028650 +0000
++++ cosmos-4.5.3/lib/cosmos/tools/tlm_viewer/widgets/canvasdot_widget.rb	2023-01-02 08:33:25.539705981 +0000
+@@ -61,6 +61,8 @@
+     end
+ 
+     def eval_str(string_to_eval)
++      # Fortify: Dynamic Code Evaluation: Code Injection
++      # TODO: Not sure how to sanitize this string
+       @screen.instance_eval(string_to_eval)
+     end
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/top_level.rb cosmos-4.5.3/lib/cosmos/top_level.rb
+--- cosmos-4.5.0/lib/cosmos/top_level.rb	2026-10-08 22:05:33.425028508 +0000
++++ cosmos-4.5.3/lib/cosmos/top_level.rb	2026-09-20 19:16:29.417906214 +0000
+@@ -320,10 +320,11 @@
+       thread = Thread.new do
+         output, _ = Open3.capture2e(command)
+         if !output.empty?
+-          # Ignore modalSession messages on Mac Mavericks and Qt Untested Windows 10
++          # Ignore modalSession messages on Mac Mavericks, Qt Untested Windows 10,
++          # and Gtk-Message module load warnings from the Qt/GTK theme bridge
+           new_output = ''
+           output.each_line do |line|
+-            new_output << line if line !~ /modalSession/ && line !~ /Untested Windows version 10.0/
++            new_output << line if line !~ /modalSession/ && line !~ /Untested Windows version 10.0/ && line !~ /^Gtk-Message:/
+           end
+           output = new_output
+ 
+@@ -397,7 +398,7 @@
+   # @param hashing_algorithm [String] Hashing algorithm to use
+   # @return [Digest::<algorithm>] The hashing sum object
+   def self.hash_files(filenames, additional_data = nil, hashing_algorithm = 'MD5')
+-    digest = Digest.const_get(hashing_algorithm).send('new')
++    digest = Digest.const_get(hashing_algorithm).public_send('new')
+ 
+     Cosmos.set_working_dir do
+       filenames.each do |filename|
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/utilities/simulated_target.rb cosmos-4.5.3/lib/cosmos/utilities/simulated_target.rb
+--- cosmos-4.5.0/lib/cosmos/utilities/simulated_target.rb	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/lib/cosmos/utilities/simulated_target.rb	2023-01-02 08:33:25.562705982 +0000
+@@ -37,7 +37,7 @@
+       @tlm_packets.each do |name, packet|
+         ids = packet.id_items
+         ids.each do |id|
+-          packet.send((id.name + '=').to_sym, id.id_value)
++          packet.public_send((id.name + '=').to_sym, id.id_value)
+         end
+       end
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/lib/cosmos/version.rb cosmos-4.5.3/lib/cosmos/version.rb
+--- cosmos-4.5.0/lib/cosmos/version.rb	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/lib/cosmos/version.rb	2023-01-02 08:33:25.562705982 +0000
+@@ -1,12 +1,12 @@
+ # encoding: ascii-8bit
+ 
+-COSMOS_VERSION = '4.5.0'
++COSMOS_VERSION = '4.5.3'
+ module Cosmos
+   module Version
+     MAJOR = '4'
+     MINOR = '5'
+-    PATCH = '0'
+-    BUILD = '627198e20200543f157cc4c2ffde5d7df5180ae2'
++    PATCH = '3'
++    BUILD = '192539e0662d9e2d68a4e76f4aedf0e8cc33b90f'
+   end
+-  VERSION = '4.5.0'
++  VERSION = '4.5.3'
+ end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/make_gems.sh cosmos-4.5.3/make_gems.sh
+--- cosmos-4.5.0/make_gems.sh	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/make_gems.sh	2023-01-02 08:33:25.562705982 +0000
+@@ -1,7 +1,7 @@
+ # export VERSION= before running this
+ git checkout master
+ git pull
+-rbenv global 2.4.4
++rbenv global 2.5.9
+ rake release VERSION=$VERSION
+ rake commit_release VERSION=$VERSION
+ mv *.gem ~/share/.
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/Rakefile cosmos-4.5.3/Rakefile
+--- cosmos-4.5.0/Rakefile	2026-10-08 22:05:33.018031860 +0000
++++ cosmos-4.5.3/Rakefile	2023-01-02 08:33:24.826705983 +0000
+@@ -169,8 +169,8 @@
+   end
+ end
+ 
+-task :git_checkout_master do
+-  system('git checkout master')
++task :git_checkout do
++  system('git checkout cosmos4')
+ end
+ 
+ task :install_crc do
+@@ -192,7 +192,7 @@
+   system('gem build cosmos.gemspec')
+ end
+ 
+-task :commit_release_ticket => [:require_version, :git_checkout_master] do
++task :commit_release_ticket => [:require_version, :git_checkout] do
+   system('git add data/crc.txt')
+   system('git add demo/config/data/crc.txt')
+   system('git add install/config/data/crc.txt')
+@@ -233,7 +233,7 @@
+   # Create the crc.txt file
+   crc = RakeCrc32.new
+   File.open("data/crc.txt",'w') do |file|
+-    Dir[File.join('lib','**','*.rb')].each do |filename|
++    Dir[File.join('lib','**','*.rb')].sort.each do |filename|
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+     end
+@@ -297,9 +297,17 @@
+   end
+ end
+ 
+-task :release => [:require_version, :git_checkout_master, :build, :spec, :manifest, :version, :install_crc, :gem]
++task :release => [:require_version, :git_checkout, :build, :spec, :manifest, :version, :install_crc, :gem]
+ task :commit_release => [:commit_release_ticket, :tag_release]
+ 
++# HOW-TO: Performing a COSMOS 4 build
++# 1. rake docker_build
++# 2. rake docker_run
++# 3. Follow the individual steps printed out
++# NOTE: When doing git push you will be asked for password
++#       You will need to enter a Github access token value
++#       Create one on Github, User -> Settings -> Developer settings -> Personal access tokens
++
+ task :docker_build do
+   _, platform, *_ = RUBY_PLATFORM.split("-")
+   if (platform == 'mswin32' or platform == 'mingw32') and which('winpty')
+@@ -314,14 +322,15 @@
+   STDOUT.puts "Steps to perform a COSMOS release:"
+   STDOUT.puts "1. git config --global user.name \"Last, First\""
+   STDOUT.puts "2. git config --global user.email \"me@ball.com\""
+-  STDOUT.puts "3. git pull"
+-  STDOUT.puts "4. export VERSION=X.X.X"
+-  STDOUT.puts "5. rake release"
+-  STDOUT.puts "6. rake commit_release"
+-  STDOUT.puts "7. export PATH=/opt/jruby/bin:$PATH"
+-  STDOUT.puts "8. rake gem"
+-  STDOUT.puts "9. /usr/bin/gem push cosmos-X.X.X.gem"
+-  STDOUT.puts "10. /usr/bin/gem push cosmos-X.X.X-java.gem"
++  STDOUT.puts "3. git checkout cosmos4"
++  STDOUT.puts "4. git pull"
++  STDOUT.puts "5. export VERSION=X.X.X"
++  STDOUT.puts "6. rake release"
++  STDOUT.puts "7. rake commit_release"
++  STDOUT.puts "8. export PATH=/opt/jruby/bin:$PATH"
++  STDOUT.puts "9. rake gem"
++  STDOUT.puts "10a. /usr/bin/gem push cosmos-X.X.X.gem"
++  STDOUT.puts "10b. /usr/bin/gem push cosmos-X.X.X-java.gem"
+   STDOUT.puts "11. cd /devel/cosmos-docker"
+   STDOUT.puts "12. git pull"
+   STDOUT.puts "13. Update COSMOS_VERSION in all Dockerfiles. Also update README.md"
+@@ -330,6 +339,7 @@
+   STDOUT.puts "16. git checkout -b vX.X.X"
+   STDOUT.puts "17. git push --set-upstream origin vX.X.X"
+   STDOUT.puts "18. Update release notes on github.com and cosmosrb.com"
+-  
++  STDOUT.puts "    https://github.com/BallAerospace/COSMOS/pulls?q=is%3Apr+is%3Aclosed+base%3Acosmos4+no%3Amilestone"
++
+   system('docker run -it --rm cosmos-dev')
+ end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/README.md cosmos-4.5.3/README.md
+--- cosmos-4.5.0/README.md	2026-10-08 22:05:33.018031860 +0000
++++ cosmos-4.5.3/README.md	2023-01-02 08:33:24.826705983 +0000
+@@ -111,7 +111,6 @@
+ 
+ ## Code Status
+ 
+-* [![Travis Build Status](https://travis-ci.org/BallAerospace/COSMOS.svg?branch=master)](https://travis-ci.org/BallAerospace/COSMOS)
+ * [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/gw61r3dvakjamx6o?svg=true)](https://ci.appveyor.com/project/jasonatball/cosmos)
+ * [![Code Climate](https://codeclimate.com/github/BallAerospace/COSMOS/badges/gpa.svg)](https://codeclimate.com/github/BallAerospace/COSMOS)
+ * [![Codecov](https://img.shields.io/codecov/c/github/codecov/example-python.svg)](https://codecov.io/gh/BallAerospace/COSMOS)
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/core_ext/class_spec.rb cosmos-4.5.3/spec/core_ext/class_spec.rb
+--- cosmos-4.5.0/spec/core_ext/class_spec.rb	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/spec/core_ext/class_spec.rb	2023-01-02 08:33:25.572705982 +0000
+@@ -31,6 +31,60 @@
+       my = MyClass.new
+       expect(MyClass.test).to eql "Test"
+       expect(my.test).to eql "Test"
++      # No accessor methods are created
++      expect { my.test = "Blah" }.to raise_error(NoMethodError)
++    end
++
++    it "does not allow arbitrary code" do
++      expect {
++        class MyClass
++          instance_attr_reader "test;puts 'HI'"
++        end
++      }.to raise_error(ArgumentError)
++
++      expect {
++        class MyClass
++          instance_attr_reader "test\nputs 'HI'"
++        end
++      }.to raise_error(ArgumentError)
++    end
++  end
++
++  describe "instance_attr_accessor" do
++    it "adds instance attribute readers for class variables" do
++      class MyClass
++        instance_attr_accessor :test
++        @@instance = nil
++        def self.instance
++          @@instance ||= self.new
++          return @@instance
++        end
++        def initialize
++          @test = "Test"
++          @@instance = self
++        end
++      end
++
++      my = MyClass.new
++      expect(MyClass.test).to eql "Test"
++      expect(my.test).to eql "Test"
++      my.test = "Blah"
++      expect(MyClass.test).to eql "Blah"
++      expect(my.test).to eql "Blah"
++    end
++
++    it "does not allow arbitrary code" do
++      expect {
++        class MyClass
++          instance_attr_accessor "test;puts 'HI'"
++        end
++      }.to raise_error(ArgumentError)
++
++      expect {
++        class MyClass
++          instance_attr_accessor "test\nputs 'HI'"
++        end
++      }.to raise_error(ArgumentError)
+     end
+   end
+ end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/gui/qt_spec.rb cosmos-4.5.3/spec/gui/qt_spec.rb
+--- cosmos-4.5.0/spec/gui/qt_spec.rb	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/spec/gui/qt_spec.rb	2023-01-02 08:33:25.579705981 +0000
+@@ -8,7 +8,7 @@
+ # as published by the Free Software Foundation; version 3 with
+ # attribution addendums as found in the LICENSE.txt
+ 
+-if RUBY_ENGINE == 'ruby'
++if RUBY_ENGINE == 'ruby' && !ENV['GITHUB_ACTIONS']
+   require 'spec_helper'
+   require 'cosmos/gui/qt'
+ 
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/gui/utilities/script_module_gui_spec.rb cosmos-4.5.3/spec/gui/utilities/script_module_gui_spec.rb
+--- cosmos-4.5.0/spec/gui/utilities/script_module_gui_spec.rb	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/spec/gui/utilities/script_module_gui_spec.rb	2023-01-02 08:33:25.580705981 +0000
+@@ -8,7 +8,7 @@
+ # as published by the Free Software Foundation; version 3 with
+ # attribution addendums as found in the LICENSE.txt
+ 
+-if RUBY_ENGINE == 'ruby'
++if RUBY_ENGINE == 'ruby' && !ENV['CI']
+   require 'spec_helper'
+   require 'cosmos/gui/qt'
+   require 'cosmos/script'
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/interfaces/serial_interface_spec.rb cosmos-4.5.3/spec/interfaces/serial_interface_spec.rb
+--- cosmos-4.5.0/spec/interfaces/serial_interface_spec.rb	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/spec/interfaces/serial_interface_spec.rb	2023-01-02 08:33:25.594705982 +0000
+@@ -9,14 +9,11 @@
+ # attribution addendums as found in the LICENSE.txt
+ 
+ if RUBY_ENGINE == 'ruby' or Gem.win_platform?
+-
+   require 'spec_helper'
+   require 'cosmos/interfaces/serial_interface'
+ 
+   module Cosmos
+-
+-    describe SerialInterface do
+-
++    describe SerialInterface, :if => `change port /query 2>&1` !~ /No serial ports/ do
+       describe "initialize" do
+         it "initializes the instance variables" do
+           i = SerialInterface.new('COM1','COM1','9600','NONE','1','0','0','burst')
+@@ -66,5 +63,4 @@
+       end
+     end
+   end
+-
+ end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/io/posix_serial_driver_spec.rb cosmos-4.5.3/spec/io/posix_serial_driver_spec.rb
+--- cosmos-4.5.0/spec/io/posix_serial_driver_spec.rb	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/spec/io/posix_serial_driver_spec.rb	2023-01-02 08:33:25.598705980 +0000
+@@ -8,7 +8,13 @@
+ # as published by the Free Software Foundation; version 3 with
+ # attribution addendums as found in the LICENSE.txt
+ 
+-if RbConfig::CONFIG['target_os'] !~ /mswin|mingw|cygwin/i and RUBY_ENGINE == 'ruby' and !ENV['TRAVIS']
++# NOTE: !ENV['DOCKER'] because of the following error while in container:
++#   Failure/Error: @handle = Kernel.open(port_name, File::RDWR | File::NONBLOCK)
++#   Errno::ENOENT:
++#     No such file or directory @ rb_sysopen - /dev/ttyS0
++#   ./lib/cosmos/io/posix_serial_driver.rb:48:in `initialize'
++
++if RbConfig::CONFIG['target_os'] !~ /mswin|mingw|cygwin/i and RUBY_ENGINE == 'ruby' and !ENV['CI'] and !ENV['DOCKER']
+ 
+   require 'spec_helper'
+   require 'cosmos/io/posix_serial_driver'
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/packet_logs/packet_log_reader_spec.rb cosmos-4.5.3/spec/packet_logs/packet_log_reader_spec.rb
+--- cosmos-4.5.0/spec/packet_logs/packet_log_reader_spec.rb	2026-10-08 22:05:33.429028481 +0000
++++ cosmos-4.5.3/spec/packet_logs/packet_log_reader_spec.rb	2023-01-02 08:33:25.603705982 +0000
+@@ -206,7 +206,7 @@
+         end
+ 
+         # Corrupt the second config
+-        second_config_path = System.instance.send(:find_configuration, second_config_name)
++        second_config_path = System.instance.public_send(:find_configuration, second_config_name)
+         md5 = File.basename(second_config_path, '.*')
+         Zip::File.open(second_config_path) do |zip|
+           zip.file.rename(File.join(md5, 'system.txt'), File.join(md5, 'system2.txt'))
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/system/system_spec.rb cosmos-4.5.3/spec/system/system_spec.rb
+--- cosmos-4.5.0/spec/system/system_spec.rb	2026-10-08 22:05:33.454028265 +0000
++++ cosmos-4.5.3/spec/system/system_spec.rb	2023-01-02 08:33:25.618705981 +0000
+@@ -359,7 +359,7 @@
+           expect(System.telemetry.packets('SYSTEM').keys).not_to include "TEST2"
+ 
+           # Now remove system.txt from the third configuration and try to load it again to cause an error
+-          #third_config_path = System.instance.send(:find_configuration, third_config_name)
++          #third_config_path = System.instance.public_send(:find_configuration, third_config_name)
+           #FileUtils.mv File.join(third_config_path, 'system.txt'), File.join(third_config_path, 'system2.txt')
+           #result, err = System.load_configuration(third_config_name)
+           #expect(result).to eql original_config_name
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/tools/cmd_tlm_server/api_spec.rb cosmos-4.5.3/spec/tools/cmd_tlm_server/api_spec.rb
+--- cosmos-4.5.0/spec/tools/cmd_tlm_server/api_spec.rb	2026-10-08 22:05:33.454028265 +0000
++++ cosmos-4.5.3/spec/tools/cmd_tlm_server/api_spec.rb	2023-01-02 08:33:25.618705982 +0000
+@@ -102,12 +102,12 @@
+     end
+ 
+     def test_cmd_unknown(method)
+-      expect { @api.send(method,"BLAH COLLECT with TYPE NORMAL") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"INST UNKNOWN with TYPE NORMAL") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"INST COLLECT with BLAH NORMAL") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"BLAH","COLLECT","TYPE"=>"NORMAL") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"INST","UNKNOWN","TYPE"=>"NORMAL") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"INST","COLLECT","BLAH"=>"NORMAL") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"BLAH COLLECT with TYPE NORMAL") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"INST UNKNOWN with TYPE NORMAL") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"INST COLLECT with BLAH NORMAL") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"BLAH","COLLECT","TYPE"=>"NORMAL") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"INST","UNKNOWN","TYPE"=>"NORMAL") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"INST","COLLECT","BLAH"=>"NORMAL") }.to raise_error(/does not exist/)
+     end
+ 
+     describe "cmd" do
+@@ -571,12 +571,12 @@
+     end
+ 
+     def test_tlm_unknown(method)
+-      expect { @api.send(method,"BLAH HEALTH_STATUS COLLECTS") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"INST UNKNOWN COLLECTS") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"INST HEALTH_STATUS BLAH") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"BLAH","HEALTH_STATUS","COLLECTS") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"INST","UNKNOWN","COLLECTS") }.to raise_error(/does not exist/)
+-      expect { @api.send(method,"INST","HEALTH_STATUS","BLAH") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"BLAH HEALTH_STATUS COLLECTS") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"INST UNKNOWN COLLECTS") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"INST HEALTH_STATUS BLAH") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"BLAH","HEALTH_STATUS","COLLECTS") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"INST","UNKNOWN","COLLECTS") }.to raise_error(/does not exist/)
++      expect { @api.public_send(method,"INST","HEALTH_STATUS","BLAH") }.to raise_error(/does not exist/)
+     end
+ 
+     describe "tlm" do
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/tools/cmd_tlm_server/background_tasks_spec.rb cosmos-4.5.3/spec/tools/cmd_tlm_server/background_tasks_spec.rb
+--- cosmos-4.5.0/spec/tools/cmd_tlm_server/background_tasks_spec.rb	2026-10-08 22:05:33.454028265 +0000
++++ cosmos-4.5.3/spec/tools/cmd_tlm_server/background_tasks_spec.rb	2023-01-02 08:33:25.620705982 +0000
+@@ -165,7 +165,7 @@
+           expect(running_threads.length).to eql(2)
+           expect(bt.instance_variable_get("@threads").length).to eq 1
+           expect(bt.instance_variable_get("@threads")[0].alive?).to eq true
+-          sleep 1.1 # Allow the thread to crash
++          sleep 2 # Allow the thread to crash
+           expect(running_threads.length).to eql(1)
+           expect(bt.instance_variable_get("@threads")[0]).to be_nil
+           expect(stdout.string).to match("unexpectedly died")
+@@ -178,7 +178,7 @@
+           expect(running_threads.length).to eql(2)
+           expect(bt.instance_variable_get("@threads").length).to eq 1
+           expect(bt.instance_variable_get("@threads")[0].alive?).to eq true
+-          sleep 1.1 # Allow the thread to crash
++          sleep 2 # Allow the thread to crash
+           expect(running_threads.length).to eql(1)
+           expect(bt.instance_variable_get("@threads")[0]).to be_nil
+           expect(stdout.string).to match("unexpectedly died")
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/tools/cmd_tlm_server/interface_thread_spec.rb cosmos-4.5.3/spec/tools/cmd_tlm_server/interface_thread_spec.rb
+--- cosmos-4.5.0/spec/tools/cmd_tlm_server/interface_thread_spec.rb	2026-10-08 22:05:33.454028265 +0000
++++ cosmos-4.5.3/spec/tools/cmd_tlm_server/interface_thread_spec.rb	2023-01-02 08:33:25.622705982 +0000
+@@ -39,8 +39,8 @@
+         @packet
+       end
+ 
+-      allow(System).to receive_message_chain(:telemetry,:identify!).and_return(nil)
+-      allow(System).to receive_message_chain(:telemetry,:update!).and_return(@packet)
++      allow(System).to receive_message_chain(:telemetry,:packet).and_return(@packet)
++      allow(System).to receive_message_chain(:telemetry,:identify).and_return(nil)
+       allow(System).to receive_message_chain(:telemetry,:identify_and_define_packet).and_return(@packet)
+       targets = {'TGT'=>Target.new('TGT')}
+       allow(System).to receive(:targets).and_return(targets)
+@@ -237,6 +237,7 @@
+       it "handles unidentified packets" do
+         capture_io do |stdout|
+           @packet = Packet.new(nil,nil)
++          @packet.buffer = "\x01\x02"
+           thread = InterfaceThread.new(@interface)
+           thread.start
+           sleep 0.1
+@@ -253,7 +254,7 @@
+         capture_io do |stdout|
+           @packet.target_name = 'BOB'
+           @packet.packet_name = 'SMITH'
+-          allow(System).to receive_message_chain(:telemetry,:update!).and_raise(RuntimeError)
++          allow(System).to receive_message_chain(:telemetry,:packet).and_raise(RuntimeError)
+           thread = InterfaceThread.new(@interface)
+           thread.start
+           sleep 0.1
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/top_level/top_level_spec.rb cosmos-4.5.3/spec/top_level/top_level_spec.rb
+--- cosmos-4.5.0/spec/top_level/top_level_spec.rb	2026-10-08 22:05:33.454028265 +0000
++++ cosmos-4.5.3/spec/top_level/top_level_spec.rb	2023-01-02 08:33:25.626705981 +0000
+@@ -520,7 +520,7 @@
+ 
+   describe "open_file_browser" do
+     it "opens a file browser" do
+-      unless ENV['TRAVIS']
++      unless ENV['CI']
+         expect(Cosmos).to receive(:system).with(/#{Dir.pwd}/)
+         Cosmos.open_file_browser(Dir.pwd)
+       end
+@@ -529,7 +529,7 @@
+ 
+   describe "open_in_text_editor" do
+     it "opens the file in a text editor" do
+-      unless ENV['TRAVIS']
++      unless ENV['CI']
+         expect(Cosmos).to receive(:system).with(/#{File.basename(__FILE__)}/)
+         Cosmos.open_in_text_editor(__FILE__)
+       end
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/spec/utilities/logger_spec.rb cosmos-4.5.3/spec/utilities/logger_spec.rb
+--- cosmos-4.5.0/spec/utilities/logger_spec.rb	2026-10-08 22:05:33.454028265 +0000
++++ cosmos-4.5.3/spec/utilities/logger_spec.rb	2023-01-02 08:33:25.626705981 +0000
+@@ -33,11 +33,11 @@
+       $stdout = stdout
+       Logger.level = level
+       if block
+-        Logger.send(method, "Message1") { "Block1" }
++        Logger.public_send(method, "Message1") { "Block1" }
+         expect(stdout.string).not_to match("Message1")
+         expect(stdout.string).to match("#{method.upcase}: Block1")
+       else
+-        Logger.send(method, "Message1")
++        Logger.public_send(method, "Message1")
+         expect(stdout.string).to match("#{method.upcase}: Message1")
+       end
+       Logger::instance.level = level + 1
+@@ -46,7 +46,7 @@
+         expect(stdout.string).not_to match("Message2")
+         expect(stdout.string).not_to match("Block2")
+       else
+-        Logger.send(method, "Message2")
++        Logger.public_send(method, "Message2")
+         expect(stdout.string).not_to match("Message2")
+       end
+       $stdout = STDOUT
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/test/performance/Rakefile cosmos-4.5.3/test/performance/Rakefile
+--- cosmos-4.5.0/test/performance/Rakefile	2026-10-08 22:05:33.454028265 +0000
++++ cosmos-4.5.3/test/performance/Rakefile	2023-01-02 08:33:25.632705981 +0000
+@@ -35,14 +35,14 @@
+   crc = Cosmos::Crc32.new(Cosmos::Crc32::DEFAULT_POLY, Cosmos::Crc32::DEFAULT_SEED, true, false)
+   File.open("config/data/crc.txt",'w') do |file|
+     file.puts "USER_MODIFIED" unless official
+-    Dir[File.join('lib','**','*')].each do |filename|
++    Dir[File.join('lib','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('config','**','*')].each do |filename|
++    Dir[File.join('config','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       next if File.basename(filename) == 'crc.txt'
+@@ -50,14 +50,14 @@
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('tools','**','*')].each do |filename|
++    Dir[File.join('tools','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+       file.puts "\"#{filename}\" #{sprintf("0x%08X", crc.calc(file_data))}"
+       count += 1
+     end
+-    Dir[File.join('procedures','**','*')].each do |filename|
++    Dir[File.join('procedures','**','*')].sort.each do |filename|
+       next if File.directory?(filename)
+       next if ignore.include?(filename)
+       file_data = File.open(filename, 'rb').read.gsub("\x0D\x0A", "\x0A")
+diff -uraN -x '*.o' -x '*.so' -x '*.bin' -x '*.gif' -x '*.txt' -x '*.tsv' -x Makefile cosmos-4.5.0/.travis.yml cosmos-4.5.3/.travis.yml
+--- cosmos-4.5.0/.travis.yml	2026-10-08 22:05:33.018031860 +0000
++++ cosmos-4.5.3/.travis.yml	1970-01-01 00:00:00.000000000 +0000
+@@ -1,16 +0,0 @@
+-env: JRUBY_OPTS=--debug
+-dist: trusty
+-language: ruby
+-cache: bundler
+-services:
+-  - postgresql
+-rvm:
+-  - jruby-9.2.9.0
+-  - 2.6.5
+-  - 2.5.7
+-  - 2.4.9
+-before_install:
+-  - sudo apt-get install -y libgl1-mesa-dev
+-  - gem update --system
+-  - gem install bundler
+-script: bundle exec rake build spec
+diff -uraN cosmos-4.5.0/Manifest.txt cosmos-4.5.3/Manifest.txt
+--- cosmos-4.5.0/Manifest.txt	2026-10-08 22:05:36.647001988 +0000
++++ cosmos-4.5.3/Manifest.txt	2026-10-08 22:05:36.645002003 +0000
+@@ -1,12 +1,11 @@
+-.coveralls.yml
+ .dockerignore
+ .gitattributes
+ .github/ISSUE_TEMPLATE/bug_report.md
+ .github/ISSUE_TEMPLATE/feature_request.md
+ .github/ISSUE_TEMPLATE/help---usage---general-question.md
++.github/workflows/build_v4.yml
+ .gitignore
+ .rubocop.yml
+-.travis.yml
+ .yardopts
+ CONTRIBUTING.txt
+ Dockerfile
